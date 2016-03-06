@@ -6,60 +6,66 @@ import copy
 
 
 #======================================================================
-# Matrix function utilities
-def transpose(self):
-	mT = []
-	for column in range (0, len(self.m[0])):
-		rowT = []
-		for row in range (0, len(self.m)):
-			rowT.append(self.m[row][column])
-		mT.append(rowT)
-	self.m = mT
-	#return self.m
+
+class Matrix:
+
+	def __init__(self, m):
+		self.m = []
+
+	# Matrix function utilities
+	def transpose(self):
+		mT = []
+		for column in range (0, len(self.m[0])):
+			rowT = []
+			for row in range (0, len(self.m)):
+				rowT.append(self.m[row][column])
+			mT.append(rowT)
+		self.m = mT
+		#return self.m
 
 
 
 
-def remove_row(self, row):
-	#n = copy(m)
-	self.m.pop(row)
-	#return self.
+	def remove_row(self, row):
+		#n = copy(m)
+		self.m.pop(row)
+		#return self.
 
-def remove_column(self, column):
-	#n = m
-	for i in range (0, len(self.m)):
-		self.m[i].pop(column)
-	#return n
+	def remove_column(self, column):
+		#n = m
+		for i in range (0, len(self.m)):
+			self.m[i].pop(column)
+		#return n
 
-def determinant(m):
-	if len(m) == 2:
-		return ((m[0][0] * m[1][1]) - (m[0][1] * m[1][0]))
-	else:
-		sum = 0
-		for column in range (0, len(m[0])):
-			num = m[0][column]
-			newDet = remove_row(m, 0)
-			newDet = remove_column(newDet, 0)
-			if (column + 1) % 2 == 0:
-				sum +=  num * determinant(newDet)
-			else:
-				sum -= num * determinant(newDet)
-
-
+	def determinant(m):
+		if len(m) == 2:
+			return ((m[0][0] * m[1][1]) - (m[0][1] * m[1][0]))
+		else:
+			sum = 0
+			for column in range (0, len(m[0])):
+				num = m[0][column]
+				newDet = remove_row(m, 0)
+				newDet = remove_column(newDet, 0)
+				if (column + 1) % 2 == 0:
+					sum +=  num * determinant(newDet)
+				else:
+					sum -= num * determinant(newDet)
 
 
 
 
 
-#def inverse(m):
+
+
+	#def inverse(m):
 
 
 
-# def sum(m1, m2):
+	# def sum(m1, m2):
 
-# def normalise(v):
+	# def normalise(v):
 
-# def dot_product(m1, m2):
+	# def dot_product(m1, m2):
 
 def multiply(m1, m2):
 	m3 = []
