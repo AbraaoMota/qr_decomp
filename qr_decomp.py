@@ -18,11 +18,14 @@ def transpose(m):
 
 def multiply(m1, m2):
 	m3 = []
-	for row in range (0, len(m1[0])):
-		row3 = []
-		for column in range (0, len(m1)):
-			row3.append(m1[row][column] * m2[row][column])
-		m3.append(row3)
+	for rowM in range (0, len(m1)):
+		row = []
+		for columnM in range (0, len(m2)):
+			product = 0
+			for c in range(0, len(m1[0])):
+				product += m1[rowM][c] * m2[c][columnM]
+			row.append(product)
+		m3.append(row)
 	return m3
 
 
@@ -110,6 +113,7 @@ def main(argv=None):
 	# Print the matrix
 	for i in range (0,dimension):
 		print(matrix[i])
+
 	
 	# Print determinant of matrix
 	# t = determinant(matrix)
