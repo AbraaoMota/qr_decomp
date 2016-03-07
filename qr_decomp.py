@@ -14,8 +14,7 @@ def transpose(m):
 		for row in range (0, len(m)):
 			rowT.append(m[row][column])
 		mT.append(rowT)
-	m = mT
-	#return self.m
+	return mT
 
 
 def remove_row(m, row):
@@ -37,7 +36,6 @@ def remove_column(m, column):
 		newMatrix.append(newRow)
 	return newMatrix
 
-	
 
 def determinant(m):
 	if len(m) == 2:
@@ -54,50 +52,81 @@ def determinant(m):
 				sum -= determinant(newDet) * num
 		return sum
 
+def inverse(m):
+	det = determinant(m) 
+	if det == 0:
+		print("This matrix has no inverse, returning original")
+		return m
+	else:
+		return s_multiply(adjugate_matrix(m), (1 / det))
 
 
-
-
-
-
-#def inverse(m):
-
-
-
-# def sum(m1, m2):
-
-# def normalise(v):
-
-# def dot_product(m1, m2):
-
-def multiply(m1, m2):
+def s_multiply(m1, n):
 	m3 = []
-	for rowM in range (0, len(m1.m)):
-		row = []
-		for columnM in range (0, len(m2.m)):
+	for row in range (0, len(m1)):
+		rowM = []
+		for column in range (0, len(m1[0])):
+			product = m1[row][column] * n
+			product = round(product, 10)
+			rowM.append(product)
+		m3.append(rowM)
+	return m3
+
+def sum(m1, m2):
+	m3 = []
+	for row in range (0, len(m1)):
+		row3 = []
+		for column in range (0, len(m1[0])):
+			row3.append(m1[row][column] + m2[row][column])
+		m3.append(row3)
+	return m3
+
+def subtract(m1, m2):
+	m3 = []
+	for row in range (0, len(m1)):
+		row3 = []
+		for column in range (0, len(m1[0])):
+			row3.append(m1[row][column] - m2[row][column])
+		m3.append(row3)
+	return m3
+
+def m_multiply(m1, m2):
+	m3 = []
+	for row in range (0, len(m1)):
+		rowM = []
+		for column in range (0, len(m2)):
 			product = 0
-			for c in range(0, len(m1.m[0])):
-				product += m1.m[rowM][c] * m2.m[c][columnM]
-			row.append(product)
-		m3.append(row)
+			for c in range(0, len(m1[0])):
+				product += m1[row][c] * m2[c][column]
+				product = round(product, 8)
+			rowM.append(product)
+		m3.append(rowM)
 	return m3
 
 
-def parity_matrix(dimension):
-	matrix = []
-	for r in range(0, dimension):
-		row = []	
-		for c  in range(0, dimension):
+def adjugate_matrix(m):
+	cofactor = []
+	for r in range (0, len(m)):
+		#newRow = list.copy(m[r])	
+		newRow = []
+		for c in range (0, len(m[0])):
+			new1 = remove_row(m, r)
+			new2 = remove_column(new1, c)
 			if (c + r + 1) % 2 == 0:
-				row.append(-1)
+				newRow.append(determinant(new2))
 			else:
-				row.append(1)
-		matrix.append(row)
-	return matrix
+				newRow.append(determinant(new2) * -1)
+		cofactor.append(newRow)
+	return transpose(cofactor)
+
+#def dot_product(m1, m2):
+
+# def normalise(v):
 
 
-	#======================================================================
-	# Random symmetric matrix generator. Generates random floats in the range -100000, 100000
+
+#======================================================================
+# Random symmetric matrix generator. Generates random floats in the range -100000, 100000
 def create_symmetric_matrix(dimension):
 	matrix = []
 	columns_covered = 0
@@ -176,25 +205,40 @@ def main(argv=None):
 
 	# Print transpose of matrix
 	# t = transpose(matrix)
-	# print("")
+	# print("Transpose of matrix is:")
 	# for i in range (0,dimension):
 	# 	print(t[i])
 
+	# Print inverse of matrix
+	inv = inverse(matrix)
+	print("Inverse of matrix is:")
+	for i in range (0,dimension):
+		print(inv[i])
+
+	# Print scalar multiplication of matrix
+	# s = s_multiply(matrix, 2)
+	# print("Scalar of matrix is:")
+	# for i in range (0,dimension):
+	# 	print(s[i])
+
+
+	# adjugate = adjugate_matrix(matrix)
+	# print("adjugate Matrix is:")
+	# for i in range (0, dimension):
+	# 	print(adjugate[i])
+
 	# Print multiplication of matrices
-	# m3 = multiply(matrix, t)
-	# print("")
+	# m3 = m_multiply(matrix, inv)
+	# print("Matrix times inverse  is ")
 	# for i in range (0,dimension):
 	# 	print(m3[i])
 
 	# Print determinant of matrix 
-	d = determinant(matrix)
-	print("")
-	print(d)
-
-	# parity = parity_matrix(dimension)
+	# d = determinant(matrix)
 	# print("")
-	# for i in range (0, dimension):
-	# 	print(parity[i])
+	# print(d)
+
+
 
 	# Print removing a row from a matrix 
 	# n = remove_row(matrix, 1)
@@ -208,7 +252,17 @@ def main(argv=None):
 	# for i in range (0, dimension):
 	# 	print(y[i])
 
+	# Print sum of 2 matrices
+	# y = sum(matrix, inv)
+	# print("")
+	# for i in range (0, dimension):
+	# 	print(y[i])
 
+	# Print subtraction of 2 matrices
+	# y = subtract(matrix, inv)
+	# print("")
+	# for i in range (0, dimension):
+	# 	print(y[i])
 
 
 
