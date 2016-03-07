@@ -7,29 +7,37 @@ import copy
 
 #======================================================================
 # Matrix function utilities
-def transpose(self):
+def transpose(m):
 	mT = []
-	for column in range (0, len(self.m[0])):
+	for column in range (0, len(m[0])):
 		rowT = []
-		for row in range (0, len(self.m)):
-			rowT.append(self.m[row][column])
+		for row in range (0, len(m)):
+			rowT.append(m[row][column])
 		mT.append(rowT)
-	self.m = mT
+	m = mT
 	#return self.m
 
 
+def remove_row(m, row):
+	newMatrix = []
+	for r in range(0, len(m)):
+		if r != row:
+			newRow = list.copy(m[r])
+			newMatrix.append(newRow)
+	return newMatrix
 
+def remove_column(m, column):
+	newMatrix = []
+	for r in range(0, len(m)):
+		newRow = []
+		for c in range (0, len(m[0])):
+			if c != column:
+				newRow.append(m[r][c])
+			
+		newMatrix.append(newRow)
+	return newMatrix
 
-def remove_row(self, row):
-	#n = copy(m)
-	self.m.pop(row)
-	#return self.
-
-def remove_column(self, column):
-	#n = m
-	for i in range (0, len(self.m)):
-		self.m[i].pop(column)
-	#return n
+	
 
 def determinant(m):
 	if len(m) == 2:
@@ -136,8 +144,8 @@ def main(argv=None):
 	
 #..............................................................................
 # Get the matrix from either a file given or generate one from the given dimensions
-	#matrix = []
-	matrix = Matrix([])
+	matrix = []
+	#matrix = Matrix([])
 	dimension = int(args.n)
 
 	# Parse numbers into the matrix if file given
@@ -146,7 +154,7 @@ def main(argv=None):
 		for line in sourceFile:
 			numberStrs = line.split()
 			nums = [int(x) for x in numberStrs]
-			matrix.m.append(nums)		
+			matrix.append(nums)		
 		sourceFile.close()
 
 	# Create our own random symmetric matrix given a dimension	
@@ -156,7 +164,7 @@ def main(argv=None):
 	
 	# Print the matrix
 	for i in range (0,dimension):
-		print(matrix.m[i])
+		print(matrix[i])
 
 	
 	# Print determinant of matrix
@@ -190,20 +198,16 @@ def main(argv=None):
 	# 	print(parity[i])
 
 	# Print removing a row from a matrix 
-	# matrix.remove_row(1)
+	# n = remove_row(matrix, 1)
 	# print("")
-	# for i in range (0, dimension - 1):
+	# for i in range (0, dimension-1):
 	# 	print(n[i])
 
-	# print("")
-
-	# for i in range (0,dimension-1):
-	# 	print(matrix.m[i])
 	# Print removing a column from a matrix 
-	# y = remove_column(matrix, 1)
-	# print("")
-	# for i in range (0, dimension):
-	# 	print(y[i])
+	y = remove_column(matrix, 0)
+	print("")
+	for i in range (0, dimension):
+		print(y[i])
 
 
 
