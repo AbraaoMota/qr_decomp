@@ -46,12 +46,13 @@ def determinant(m):
 		sum = 0
 		for column in range (0, len(m[0])):
 			num = m[0][column]
-			newDet = remove_row(m, 0)
-			newDet = remove_column(newDet, 0)
+			newDet1 = remove_row(m, 0)
+			newDet = remove_column(newDet1, column)
 			if (column + 1) % 2 == 0:
-				sum +=  num * determinant(newDet)
+				sum +=  determinant(newDet) * num
 			else:
-				sum -= num * determinant(newDet)
+				sum -= determinant(newDet) * num
+		return sum
 
 
 
@@ -186,11 +187,9 @@ def main(argv=None):
 	# 	print(m3[i])
 
 	# Print determinant of matrix 
-
-	# Print parity matrix of size dimension
-	# d = determinant(matrix)
-	# print("")
-	# print(d)
+	d = determinant(matrix)
+	print("")
+	print(d)
 
 	# parity = parity_matrix(dimension)
 	# print("")
@@ -204,10 +203,10 @@ def main(argv=None):
 	# 	print(n[i])
 
 	# Print removing a column from a matrix 
-	y = remove_column(matrix, 0)
-	print("")
-	for i in range (0, dimension):
-		print(y[i])
+	# y = remove_column(matrix, 0)
+	# print("")
+	# for i in range (0, dimension):
+	# 	print(y[i])
 
 
 
