@@ -3,6 +3,7 @@ import sys
 import os
 import argparse
 import copy
+import math
 
 
 #======================================================================
@@ -107,7 +108,6 @@ def m_multiply(m1, m2):
 def adjugate_matrix(m):
 	cofactor = []
 	for r in range (0, len(m)):
-		#newRow = list.copy(m[r])	
 		newRow = []
 		for c in range (0, len(m[0])):
 			new1 = remove_row(m, r)
@@ -119,9 +119,16 @@ def adjugate_matrix(m):
 		cofactor.append(newRow)
 	return transpose(cofactor)
 
-#def dot_product(m1, m2):
-
-# def normalise(v):
+def normalise(v):
+	newV = []
+	squaredSum = 0
+	for i in range (0, len(v)):
+		squaredSum += v[i] ** 2
+	print(squaredSum)
+	norm = math.sqrt(squaredSum)
+	for j in range (0, len(v)):
+		newV.append(v[j] / norm)
+	return newV
 
 
 
@@ -210,10 +217,10 @@ def main(argv=None):
 	# 	print(t[i])
 
 	# Print inverse of matrix
-	inv = inverse(matrix)
-	print("Inverse of matrix is:")
-	for i in range (0,dimension):
-		print(inv[i])
+	# inv = inverse(matrix)
+	# print("Inverse of matrix is:")
+	# for i in range (0,dimension):
+	# 	print(inv[i])
 
 	# Print scalar multiplication of matrix
 	# s = s_multiply(matrix, 2)
@@ -238,8 +245,6 @@ def main(argv=None):
 	# print("")
 	# print(d)
 
-
-
 	# Print removing a row from a matrix 
 	# n = remove_row(matrix, 1)
 	# print("")
@@ -263,6 +268,16 @@ def main(argv=None):
 	# print("")
 	# for i in range (0, dimension):
 	# 	print(y[i])
+
+	# Print normalised vector
+	# print(matrix[0])
+	# v = normalise(matrix[0])
+	# print("")
+	# for i in range (0, len(v)):
+	# 	print(v[i])
+
+
+
 
 
 
