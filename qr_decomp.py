@@ -110,6 +110,12 @@ def dot_product(v1, v2):
 		s += v1[row] * v2[row]
 	return s
 
+def is_singular(m):
+	return !inverse(m) == m
+
+
+
+
 
 def adjugate_matrix(m):
 	cofactor = []
