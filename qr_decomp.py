@@ -104,6 +104,12 @@ def m_multiply(m1, m2):
 		m3.append(rowM)
 	return m3
 
+def dot_product(v1, v2):
+	s = 0
+	for row in range (0, len(v1)):
+		s += v1[row] * v2[row]
+	return s
+
 
 def adjugate_matrix(m):
 	cofactor = []
@@ -149,6 +155,13 @@ def create_symmetric_matrix(dimension):
 		columns_covered += 1
 
 	return matrix
+
+
+def qr_decomp(m, q, r):
+	q = []
+	r = []
+
+	
 
 
 #======================================================================
@@ -235,10 +248,19 @@ def main(argv=None):
 	# 	print(adjugate[i])
 
 	# Print multiplication of matrices
-	# m3 = m_multiply(matrix, inv)
+	# v1 = [-6, 8]
+	# v2 = [5, 12]
+	# m3 = m_multiply(v1, v2)
 	# print("Matrix times inverse  is ")
-	# for i in range (0,dimension):
+	# for i in range (0, len(m3)):
 	# 	print(m3[i])
+
+	# Print dot product of vectors
+	# v1 = [-6, 8]
+	# v2 = [5, 12]
+	# v3 = dot_product(v1, v2)
+	# print("Dot product of v1 and 2 is")
+	# print(v3)
 
 	# Print determinant of matrix 
 	# d = determinant(matrix)
