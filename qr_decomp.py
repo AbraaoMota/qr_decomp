@@ -62,7 +62,7 @@ def inverse(m):
 		return s_multiply(adjugate_matrix(m), (1 / det))
 
 
-def s_multiply(m1, n):
+def m_s_multiply(m1, n):
 	m3 = []
 	for row in range (0, len(m1)):
 		rowM = []
@@ -73,7 +73,13 @@ def s_multiply(m1, n):
 		m3.append(rowM)
 	return m3
 
-def sum(m1, m2):
+def v_s_multiply(v1, n):
+	v2 = []
+	for row in range (len(v1)):
+		v2.append(v1[row] * n)
+	return v2
+
+def m_sum(m1, m2):
 	m3 = []
 	for row in range (0, len(m1)):
 		row3 = []
@@ -82,7 +88,13 @@ def sum(m1, m2):
 		m3.append(row3)
 	return m3
 
-def subtract(m1, m2):
+def v_sum(v1, v2):
+	v3 = []
+	for row in range (len(v1)):
+		v3.append(v1[row] + v2[row])
+	return v3
+
+def m_subtract(m1, m2):
 	m3 = []
 	for row in range (0, len(m1)):
 		row3 = []
@@ -90,6 +102,12 @@ def subtract(m1, m2):
 			row3.append(m1[row][column] - m2[row][column])
 		m3.append(row3)
 	return m3
+
+def v_subtract(v1, v2):
+	v3 = []
+	for r in range (len(v1)):
+		v3.append(v1[r] - v2[r])
+	return v3
 
 def m_multiply(m1, m2):
 	m3 = []
@@ -111,11 +129,7 @@ def dot_product(v1, v2):
 	return s
 
 def is_singular(m):
-	return !inverse(m) == m
-
-
-
-
+	return inverse(m) is not m
 
 def adjugate_matrix(m):
 	cofactor = []
@@ -136,7 +150,6 @@ def normalise(v):
 	squaredSum = 0
 	for i in range (0, len(v)):
 		squaredSum += v[i] ** 2
-	print(squaredSum)
 	norm = math.sqrt(squaredSum)
 	for j in range (0, len(v)):
 		newV.append(v[j] / norm)
@@ -163,9 +176,55 @@ def create_symmetric_matrix(dimension):
 	return matrix
 
 
+
+
 def qr_decomp(m, q, r):
+	q = find_q(m, q)
+	r = find_r(m, q, r)
+
+def find_q(m):
 	q = []
-	r = []
+	u = find_u(m)
+	for i in range (len(u)):
+		qRow = normalise(get_column(u, i))
+		q.append(qRow)
+	return transpose(q)
+
+def find_u(m):
+	u = [[] for x in range(len(m))]
+	for l in range (len(u)):
+		u[l].append(m[l][0])
+
+	for c in range (1, len(m[0])):
+		mN = get_column(m, c)
+		mNcopy = list.copy(mN)
+
+		vectorSum = [0] * len(m[0])
+		for k in range (0, c):
+			eC = normalise(get_column(u, k))
+
+			vectorSum = v_sum(vectorSum, v_s_multiply(eC, dot_product(mNcopy, eC)))
+
+		uC = v_subtract(mN, vectorSum)
+
+		for r in range (len(m)):
+			u[r].append(uC[r])
+	return u
+
+
+def get_row(m, n):
+	return m[n]
+
+def get_column(m, n):
+	col = []
+	for r in range (len(m)):
+		for c in range (len(m[0])):
+			if c == n:
+				col.append(m[r][c])
+	return col
+
+
+
 
 	
 
@@ -304,7 +363,27 @@ def main(argv=None):
 	# for i in range (0, len(v)):
 	# 	print(v[i])
 
+	# Print column, row of a vector
+	# c = get_column(matrix, 0)
+	# print("")
+	# print(c)
+	# r = get_row(matrix, 1)
+	# print("")
+	# print(r)
 
+	# Print u of matrix
+	u = find_u(matrix)
+	print("U is:")
+	for i in range (0, len(u)):
+		print(u[i])
+
+	print("U should be:")
+	print("[12, -69, -58/5]\n[6, 158, 6/5]\n[-4, 30,-33]")
+
+	q = find_q(matrix)
+	print("Q is:")
+	for i in range (len(q)):
+		print(q[i])
 
 
 
