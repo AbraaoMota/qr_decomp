@@ -395,6 +395,7 @@ def main(argv=None):
 	# qr_decomp(matrix, q, r)
 	# print(q)
 	# print(r)
+	print("")
 	q = find_q(matrix)
 	print("Q IS:")
 
