@@ -179,8 +179,12 @@ def create_symmetric_matrix(dimension):
 
 
 def qr_decomp(m, q, r):
-	q = find_q(m, q)
-	r = find_r(m, q, r)
+	q = find_q(m)
+	r = find_r(m, q)
+	return
+
+def find_r(m, q):
+	return m_multiply(transpose(find_q(m)), m)
 
 def find_q(m):
 	q = []
@@ -372,22 +376,37 @@ def main(argv=None):
 	# print(r)
 
 	# Print u of matrix
-	u = find_u(matrix)
-	print("U is:")
-	for i in range (0, len(u)):
-		print(u[i])
+	# u = find_u(matrix)
+	# print("U is:")
+	# for i in range (0, len(u)):
+	# 	print(u[i])
 
-	print("U should be:")
-	print("[12, -69, -58/5]\n[6, 158, 6/5]\n[-4, 30,-33]")
+	# print("U should be:")
+	# print("[12, -69, -58/5]\n[6, 158, 6/5]\n[-4, 30,-33]")
 
+	# q = find_q(matrix)
+	# print("Q is:")
+	# for i in range (len(q)):
+	# 	print(q[i])
+
+	# Print QR Decomposition
+	# q = []
+	# r = []
+	# qr_decomp(matrix, q, r)
+	# print(q)
+	# print(r)
 	q = find_q(matrix)
-	print("Q is:")
+	print("Q IS:")
+
 	for i in range (len(q)):
 		print(q[i])
+	print("")
 
-
-
-
+	r = find_r(matrix, q)
+	print("R IS:")
+	for i in range (len(r)):
+		print(r[i])
+	print("")
 
 
 # ==============================================================================
