@@ -242,6 +242,7 @@ def get_column(m, n):
 	return col
 
 
+# Finds the first and largest eigenvalue by power iteration
 def power_it(matrix, init_v, threshold, prevRatio):
 	xk = m_v_multiply(matrix, init_v)
 	ratio = xk[0] / init_v[0]
@@ -249,6 +250,31 @@ def power_it(matrix, init_v, threshold, prevRatio):
 		return ratio
 	else:
 		return power_it(matrix, xk, threshold, ratio)
+
+
+def qr_factor(matrix):
+	q = find_q(matrix)
+	r = find_r(matrix, q)
+	ak = m_m_multiply(r, q)
+	return ak
+
+def max_upper_triangle(m):
+	utMax = m[0][1]
+	for r in range (len(m)):
+		for c in range (len(m) - r, len(m)):
+			if m[r][c] > utMax:
+				utMax = m[r][c]
+	return utMax
+
+def qr_iteration(m, threshold):
+	ak = qr_factor(m)
+	if max_upper_triangle(m) < threshold:
+		return ak
+	else:
+		return qr_iteration(ak, threshold)
+
+
+
 
 
 #======================================================================
@@ -429,18 +455,30 @@ def main(argv=None):
 
 
 	# Print power iteration of a matrix
-	v = []
-	v.append(1)
-	for i in range (len(matrix) - 1):
-		v.append(0)
+	# v = []
+	# v.append(1)
+	# for i in range (len(matrix) - 1):
+	# 	v.append(0)
 
-	print("v is:")
-	print(v)
+	# print("v is:")
+	# print(v)
 
-	eigenvalue = power_it(matrix, v, 0.00001, None)
+	# eigenvalue = power_it(matrix, v, 0.001, None)
 
-	print("eigenvalue is:")
-	print(eigenvalue)
+	# print("eigenvalue is:")
+	# print(eigenvalue)
+
+	# Print upper triangular max
+	# uMax = max_upper_triangle(matrix)
+	# print("uMax is:")
+	# print(uMax)
+
+	# Print qr iteration
+	ak = qr_iteration(matrix, 0.01)
+	for i in range (len(matrix)):
+		print(ak[i])
+
+
 
 # ==============================================================================
 # call main if executed as script
