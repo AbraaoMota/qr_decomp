@@ -190,8 +190,6 @@ def create_symmetric_matrix(dimension):
 	return matrix
 
 
-
-
 def qr_decomp(m, q, r):
 	q = find_q(m)
 	r = find_r(m, q)
@@ -266,12 +264,12 @@ def max_upper_triangle(m):
 				utMax = m[r][c]
 	return utMax
 
-def qr_iteration(m, threshold):
+def qr_it(m, threshold):
 	ak = qr_factor(m)
-	if max_upper_triangle(m) < threshold:
-		return ak
-	else:
-		return qr_iteration(ak, threshold)
+	while abs(max_upper_triangle(ak)) > threshold:
+		ak = qr_factor(ak)
+	return ak
+
 
 
 
@@ -474,7 +472,7 @@ def main(argv=None):
 	# print(uMax)
 
 	# Print qr iteration
-	ak = qr_iteration(matrix, 0.01)
+	ak = qr_it(matrix, 0.01)
 	for i in range (len(matrix)):
 		print(ak[i])
 
