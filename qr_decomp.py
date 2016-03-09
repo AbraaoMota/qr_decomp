@@ -59,7 +59,7 @@ def inverse(m):
 		print("This matrix has no inverse, returning original")
 		return m
 	else:
-		return s_multiply(adjugate_matrix(m), (1 / det))
+		return m_s_multiply(adjugate_matrix(m), (1 / det))
 
 
 def m_s_multiply(m1, n):
@@ -100,6 +100,15 @@ def m_subtract(m1, m2):
 		row3 = []
 		for column in range (0, len(m1[0])):
 			row3.append(m1[row][column] - m2[row][column])
+		m3.append(row3)
+	return m3
+
+def m_add(m1, m2):
+	m3 = []
+	for row in range (0, len(m1)):
+		row3 = []
+		for column in range (0, len(m1[0])):
+			row3.append(m1[row][column] + m2[row][column])
 		m3.append(row3)
 	return m3
 
@@ -165,6 +174,8 @@ def normalise(v):
 	for i in range (0, len(v)):
 		squaredSum += v[i] ** 2
 	norm = math.sqrt(squaredSum)
+	if norm == 0:
+		return v
 	for j in range (0, len(v)):
 		newV.append(v[j] / norm)
 	return newV
@@ -228,6 +239,20 @@ def find_u(m):
 	return u
 
 
+
+def identity_matrix(n):
+	m = []
+	for r in range (n):
+		mRow = []
+		for c in range (n):
+			if c == r:
+				mRow.append(1)
+			else:
+				mRow.append(0)
+		m.append(mRow)
+	return m
+
+
 def get_row(m, n):
 	return m[n]
 
@@ -249,6 +274,15 @@ def power_it(matrix, init_v, threshold, prevRatio):
 	else:
 		return power_it(matrix, xk, threshold, ratio)
 
+def max_abs_upper_triangle(m):
+	utMax = abs(m[0][1])
+	for r in range (len(m)):
+		for c in range (r+1, len(m)):
+			mRC = m[r][c]
+			if abs(mRC) > utMax:
+				utMax = abs(mRC)
+	return utMax
+
 
 def qr_factor(matrix):
 	q = find_q(matrix)
@@ -256,19 +290,31 @@ def qr_factor(matrix):
 	ak = m_m_multiply(r, q)
 	return ak
 
-def max_upper_triangle(m):
-	utMax = m[0][1]
-	for r in range (len(m)):
-		for c in range (len(m) - r, len(m)):
-			if m[r][c] > utMax:
-				utMax = m[r][c]
-	return utMax
 
 def qr_it(m, threshold):
 	ak = qr_factor(m)
-	while abs(max_upper_triangle(ak)) > threshold:
+	uT = max_abs_upper_triangle(ak)
+	if uT > threshold:
 		ak = qr_factor(ak)
 	return ak
+
+def qr_factor_w_shifts(m):
+	shiftId = m_s_multiply(identity_matrix(len(m)), m[len(m) - 1][len(m) - 1])
+	matrix = m_subtract(m, shiftId)
+	q = find_q(matrix)
+	r = find_r(matrix, q)
+	rq = m_m_multiply(r, q)
+	ak = m_add(rq, shiftId)
+	return ak
+
+def qr_it_w_shifts(m, threshold):
+	ak = qr_factor_w_shifts(m)
+	uT = max_abs_upper_triangle(ak)
+	if uT > threshold:
+		ak = qr_it_w_shifts(ak, threshold)
+	return ak
+
+
 
 
 
@@ -347,7 +393,7 @@ def main(argv=None):
 	# 	print(inv[i])
 
 	# Print scalar multiplication of matrix
-	# s = s_multiply(matrix, 2)
+	# s = m_s_multiply(matrix, 2)
 	# print("Scalar of matrix is:")
 	# for i in range (0,dimension):
 	# 	print(s[i])
@@ -432,24 +478,19 @@ def main(argv=None):
 	# 	print(q[i])
 
 	# Print QR Decomposition
-	# q = []
-	# r = []
-	# qr_decomp(matrix, q, r)
-	# print(q)
-	# print(r)
-	print("")
-	q = find_q(matrix)
-	print("Q IS:")
+	# print("")
+	# q = find_q(matrix)
+	# print("Q IS:")
 
-	for i in range (len(q)):
-		print(q[i])
-	print("")
+	# for i in range (len(q)):
+	# 	print(q[i])
+	# print("")
 
-	r = find_r(matrix, q)
-	print("R IS:")
-	for i in range (len(r)):
-		print(r[i])
-	print("")
+	# r = find_r(matrix, q)
+	# print("R IS:")
+	# for i in range (len(r)):
+	# 	print(r[i])
+	# print("")
 
 
 	# Print power iteration of a matrix
@@ -467,12 +508,25 @@ def main(argv=None):
 	# print(eigenvalue)
 
 	# Print upper triangular max
-	# uMax = max_upper_triangle(matrix)
+	# uMax = max_abs_upper_triangle(matrix)
 	# print("uMax is:")
 	# print(uMax)
 
+	# Print id matrix
+	# im = identity_matrix(dimension)
+	# print("")
+	# print("im is:")
+	# for i in range (dimension):
+	# 	print(im[i])
+
 	# Print qr iteration
-	ak = qr_it(matrix, 0.01)
+	# ak1 = qr_it(matrix, 0.01)
+	# for i in range (len(matrix)):
+	#  	print(ak1[i])
+
+	# Print shifted qr it
+	print("\nQr iteration:")
+	ak = qr_it_w_shifts(matrix, 0.01)
 	for i in range (len(matrix)):
 		print(ak[i])
 
