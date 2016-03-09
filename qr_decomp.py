@@ -314,6 +314,16 @@ def qr_it_w_shifts(m, threshold):
 		ak = qr_it_w_shifts(ak, threshold)
 	return ak
 
+def get_eigenvalues(m, threshold):
+	values = []
+	ak = qr_it_w_shifts(m, threshold)
+	for r in range (len(ak)):
+		for c in range (len(ak)):
+			if c == r:
+				eVal = ak[r][c]
+				eVal = round(eVal, 4)
+				values.append(eVal)
+	return values
 
 
 
@@ -530,6 +540,10 @@ def main(argv=None):
 	for i in range (len(matrix)):
 		print(ak[i])
 
+	# Print eigenvalues
+	eVal = get_eigenvalues(matrix, 0.01)
+	print("\nEigenvalues are:")
+	print(eVal)
 
 
 # ==============================================================================
