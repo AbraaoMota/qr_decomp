@@ -266,13 +266,13 @@ def get_column(m, n):
 
 
 # Finds the first and largest eigenvalue by power iteration
-def power_it(matrix, init_v, threshold, prevRatio):
-	xk = m_v_multiply(matrix, init_v)
-	ratio = xk[0] / init_v[0]
-	if (prevRatio != None and abs(ratio - prevRatio) < threshold):
-		return ratio
-	else:
-		return power_it(matrix, xk, threshold, ratio)
+# def power_it(matrix, init_v, threshold, prevRatio):
+# 	xk = m_v_multiply(matrix, init_v)
+# 	ratio = xk[0] / init_v[0]
+# 	if (prevRatio != None and abs(ratio - prevRatio) < threshold):
+# 		return ratio
+# 	else:
+# 		return power_it(matrix, xk, threshold, ratio)
 
 def max_abs_upper_triangle(m):
 	utMax = abs(m[0][1])
@@ -284,19 +284,19 @@ def max_abs_upper_triangle(m):
 	return utMax
 
 
-def qr_factor(matrix):
-	q = find_q(matrix)
-	r = find_r(matrix, q)
-	ak = m_m_multiply(r, q)
-	return ak
+# def qr_factor(matrix):
+# 	q = find_q(matrix)
+# 	r = find_r(matrix, q)
+# 	ak = m_m_multiply(r, q)
+# 	return ak
 
 
-def qr_it(m, threshold):
-	ak = qr_factor(m)
-	uT = max_abs_upper_triangle(ak)
-	if uT > threshold:
-		ak = qr_factor(ak)
-	return ak
+# def qr_it(m, threshold):
+# 	ak = qr_factor(m)
+# 	uT = max_abs_upper_triangle(ak)
+# 	if uT > threshold:
+# 		ak = qr_factor(ak)
+# 	return ak
 
 def qr_factor_w_shifts(m):
 	shiftId = m_s_multiply(identity_matrix(len(m)), m[len(m) - 1][len(m) - 1])
@@ -305,18 +305,18 @@ def qr_factor_w_shifts(m):
 	r = find_r(matrix, q)
 	rq = m_m_multiply(r, q)
 	ak = m_add(rq, shiftId)
-	return ak
+	return ak, q
 
 def qr_it_w_shifts(m, threshold):
-	ak = qr_factor_w_shifts(m)
+	ak, q = qr_factor_w_shifts(m)
 	uT = max_abs_upper_triangle(ak)
 	if uT > threshold:
-		ak = qr_it_w_shifts(ak, threshold)
-	return ak
+		ak, _ = qr_it_w_shifts(ak, threshold)
+	return ak, q
 
 def get_eigenvalues(m, threshold):
 	values = []
-	ak = qr_it_w_shifts(m, threshold)
+	ak, _ = qr_it_w_shifts(m, threshold)
 	for r in range (len(ak)):
 		for c in range (len(ak)):
 			if c == r:
@@ -325,6 +325,9 @@ def get_eigenvalues(m, threshold):
 				values.append(eVal)
 	return values
 
+def get_eigenvectors(m, threshold):
+	_, q = qr_it_w_shifts(m, threshold)
+	return q
 
 
 
@@ -536,7 +539,7 @@ def main(argv=None):
 
 	# Print shifted qr it
 	print("\nQr iteration:")
-	ak = qr_it_w_shifts(matrix, 0.01)
+	ak, qk = qr_it_w_shifts(matrix, 0.01)
 	for i in range (len(matrix)):
 		print(ak[i])
 
@@ -544,6 +547,11 @@ def main(argv=None):
 	eVal = get_eigenvalues(matrix, 0.01)
 	print("\nEigenvalues are:")
 	print(eVal)
+
+	# Print eigenvectors
+	print("\nEigenvectors are:")
+	for i in range (len(qk)):
+		print(qk[i])
 
 
 # ==============================================================================
