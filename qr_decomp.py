@@ -109,7 +109,7 @@ def v_subtract(v1, v2):
 		v3.append(v1[r] - v2[r])
 	return v3
 
-def m_multiply(m1, m2):
+def m_m_multiply(m1, m2):
 	m3 = []
 	for row in range (0, len(m1)):
 		rowM = []
@@ -121,6 +121,20 @@ def m_multiply(m1, m2):
 			rowM.append(product)
 		m3.append(rowM)
 	return m3
+
+
+def m_v_multiply(m, v):
+	m2 = []
+	for row in range (0, len(m)):
+		product = 0
+		for column in range (0, len(m[0])):
+			#for c in range(0, len(m[0])):
+			product += m[row][column] * v[column]
+
+			product = round(product, 8)
+			#rowM.append(product)
+		m2.append(product)
+	return m2
 
 def dot_product(v1, v2):
 	s = 0
@@ -184,7 +198,7 @@ def qr_decomp(m, q, r):
 	return
 
 def find_r(m, q):
-	return m_multiply(transpose(find_q(m)), m)
+	return m_m_multiply(transpose(find_q(m)), m)
 
 def find_q(m):
 	q = []
@@ -201,7 +215,7 @@ def find_u(m):
 
 	for c in range (1, len(m[0])):
 		mN = get_column(m, c)
-		mNcopy = list.copy(mN)
+		mNcopy = mN[:]
 
 		vectorSum = [0] * len(m[0])
 		for k in range (0, c):
@@ -228,9 +242,13 @@ def get_column(m, n):
 	return col
 
 
-
-
-	
+def power_it(matrix, init_v, threshold, prevRatio):
+	xk = m_v_multiply(matrix, init_v)
+	ratio = xk[0] / init_v[0]
+	if (prevRatio != None and abs(ratio - prevRatio) < threshold):
+		return ratio
+	else:
+		return power_it(matrix, xk, threshold, ratio)
 
 
 #======================================================================
@@ -319,7 +337,7 @@ def main(argv=None):
 	# Print multiplication of matrices
 	# v1 = [-6, 8]
 	# v2 = [5, 12]
-	# m3 = m_multiply(v1, v2)
+	# m3 = m_m_multiply(v1, v2)
 	# print("Matrix times inverse  is ")
 	# for i in range (0, len(m3)):
 	# 	print(m3[i])
@@ -409,6 +427,20 @@ def main(argv=None):
 		print(r[i])
 	print("")
 
+
+	# Print power iteration of a matrix
+	v = []
+	v.append(1)
+	for i in range (len(matrix) - 1):
+		v.append(0)
+
+	print("v is:")
+	print(v)
+
+	eigenvalue = power_it(matrix, v, 0.00001, None)
+
+	print("eigenvalue is:")
+	print(eigenvalue)
 
 # ==============================================================================
 # call main if executed as script
