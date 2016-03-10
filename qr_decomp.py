@@ -284,20 +284,6 @@ def max_abs_upper_triangle(m):
 	return utMax
 
 
-# def qr_factor(matrix):
-# 	q = find_q(matrix)
-# 	r = find_r(matrix, q)
-# 	ak = m_m_multiply(r, q)
-# 	return ak
-
-
-# def qr_it(m, threshold):
-# 	ak = qr_factor(m)
-# 	uT = max_abs_upper_triangle(ak)
-# 	if uT > threshold:
-# 		ak = qr_factor(ak)
-# 	return ak
-
 def qr_factor_w_shifts(m, qs):
 	if qs == None:
 		qs = []
@@ -305,12 +291,6 @@ def qr_factor_w_shifts(m, qs):
 	matrix = m_subtract(m, shiftId)
 	q = find_q(matrix)
 	r = find_r(matrix, q)
-
-	print("\nQ's used are:")
-	for i in range (len(q)):
-		print(q[i])
-	print("")
-
 	rq = m_m_multiply(r, q)
 	ak = m_add(rq, shiftId)
 
@@ -322,14 +302,13 @@ def qr_it_w_shifts(m, threshold, qs):
 		qs = []
 	ak = qr_factor_w_shifts(m, qs)
 	uT = max_abs_upper_triangle(ak)
-	#qk = m_m_multiply(prevQ, q)
 	if uT > threshold:
 		ak = qr_it_w_shifts(ak, threshold, qs)
 	return ak
 
-def get_eigenvalues(m, threshold, q1):
+def get_eigenvalues(m, threshold, qs):
 	values = []
-	ak = qr_it_w_shifts(m, threshold, q1)
+	ak = qr_it_w_shifts(m, threshold, qs)
 	for r in range (len(ak)):
 		for c in range (len(ak)):
 			if c == r:
@@ -338,16 +317,49 @@ def get_eigenvalues(m, threshold, q1):
 				values.append(eVal)
 	return values
 
+
+
+def qr_factor(matrix, qs):
+	q = find_q(matrix)
+	r = find_r(matrix, q)
+	ak = m_m_multiply(r, q)
+	qs.append(q)
+	return ak
+
+
+def qr_it(m, threshold, qs):
+	if qs == None:
+		qs = []
+	ak = qr_factor(m, qs)
+	uT = max_abs_upper_triangle(ak)
+	if uT > threshold:
+		ak = qr_it(ak, threshold, qs)
+	return ak
+
 def get_eigenvectors(m, threshold):
 	qs = []
+	counter = 0
 	_ = qr_it_w_shifts(m, threshold, qs)
-	qk = None
-	for i in range (len(qs) - 1):
-		qk = m_m_multiply(qs[i], qs[i+1])
-	return m_m_multiply(qk, m)
+	qk = identity_matrix(len(m))
+	for i in range (0, len(qs)):
+		qk = m_m_multiply(qk, qs[i])
+	
 
+	# Lines them up to be read as is
+	return transpose(qk)
 
-
+def m_normalise(m):
+	normQ = []
+	det = determinant(m)
+	if det == 0:
+		print("this matrix has det 0")
+		return m
+	for r in range (len(m)):
+		normRow = []
+		for c in range (len(m[0])):
+			normRow.append(m[r][c] / det)
+		normQ.append(normRow)
+	return normQ
 
 
 
@@ -550,21 +562,22 @@ def main(argv=None):
 	# 	print(im[i])
 
 	# Print qr iteration
-	# ak1 = qr_it(matrix, 0.01)
-	# for i in range (len(matrix)):
-	#  	print(ak1[i])
+	ak1 = qr_it(matrix, 0.01, [])
+	print("\nQR WITHOUT SHIFTS\n")
+	for i in range (len(matrix)):
+	 	print(ak1[i])
 
 	# Print shifted qr it
-	print("\nQr iteration:")
-	qs = None
-	ak = qr_it_w_shifts(matrix, 0.01, qs)
-	for i in range (len(matrix)):
-		print(ak[i])
+	# print("\nQR WITH SHIFTS:")
+	# qs = None
+	# ak = qr_it_w_shifts(matrix, 0.01, qs, 0)
+	# for i in range (len(matrix)):
+	# 	print(ak[i])
 
 	# Print eigenvalues
-	eVal = get_eigenvalues(matrix, 0.01, None)
-	print("\nEigenvalues are:")
-	print(eVal)
+	# eVal = get_eigenvalues(matrix, 0.01, None)
+	# print("\nEigenvalues are:")
+	# print(eVal)
 
 	# Print eigenvectors
 	print("\nEigenvectors are:")
