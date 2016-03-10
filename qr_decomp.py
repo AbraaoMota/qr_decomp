@@ -298,25 +298,38 @@ def max_abs_upper_triangle(m):
 # 		ak = qr_factor(ak)
 # 	return ak
 
-def qr_factor_w_shifts(m):
+def qr_factor_w_shifts(m, qs):
+	if qs == None:
+		qs = []
 	shiftId = m_s_multiply(identity_matrix(len(m)), m[len(m) - 1][len(m) - 1])
 	matrix = m_subtract(m, shiftId)
 	q = find_q(matrix)
 	r = find_r(matrix, q)
+
+	print("\nQ's used are:")
+	for i in range (len(q)):
+		print(q[i])
+	print("")
+
 	rq = m_m_multiply(r, q)
 	ak = m_add(rq, shiftId)
-	return ak, q
 
-def qr_it_w_shifts(m, threshold):
-	ak, q = qr_factor_w_shifts(m)
+	qs.append(q)
+	return ak
+
+def qr_it_w_shifts(m, threshold, qs):
+	if qs == None:
+		qs = []
+	ak = qr_factor_w_shifts(m, qs)
 	uT = max_abs_upper_triangle(ak)
+	#qk = m_m_multiply(prevQ, q)
 	if uT > threshold:
-		ak, _ = qr_it_w_shifts(ak, threshold)
-	return ak, q
+		ak = qr_it_w_shifts(ak, threshold, qs)
+	return ak
 
-def get_eigenvalues(m, threshold):
+def get_eigenvalues(m, threshold, q1):
 	values = []
-	ak, _ = qr_it_w_shifts(m, threshold)
+	ak = qr_it_w_shifts(m, threshold, q1)
 	for r in range (len(ak)):
 		for c in range (len(ak)):
 			if c == r:
@@ -326,8 +339,12 @@ def get_eigenvalues(m, threshold):
 	return values
 
 def get_eigenvectors(m, threshold):
-	_, q = qr_it_w_shifts(m, threshold)
-	return q
+	qs = []
+	_ = qr_it_w_shifts(m, threshold, qs)
+	qk = None
+	for i in range (len(qs) - 1):
+		qk = m_m_multiply(qs[i], qs[i+1])
+	return m_m_multiply(qk, m)
 
 
 
@@ -491,19 +508,19 @@ def main(argv=None):
 	# 	print(q[i])
 
 	# Print QR Decomposition
-	# print("")
-	# q = find_q(matrix)
-	# print("Q IS:")
+	print("")
+	q = find_q(matrix)
+	print("Q IS:")
 
-	# for i in range (len(q)):
-	# 	print(q[i])
-	# print("")
+	for i in range (len(q)):
+		print(q[i])
+	print("")
 
-	# r = find_r(matrix, q)
-	# print("R IS:")
-	# for i in range (len(r)):
-	# 	print(r[i])
-	# print("")
+	r = find_r(matrix, q)
+	print("R IS:")
+	for i in range (len(r)):
+		print(r[i])
+	print("")
 
 
 	# Print power iteration of a matrix
@@ -539,19 +556,21 @@ def main(argv=None):
 
 	# Print shifted qr it
 	print("\nQr iteration:")
-	ak, qk = qr_it_w_shifts(matrix, 0.01)
+	qs = None
+	ak = qr_it_w_shifts(matrix, 0.01, qs)
 	for i in range (len(matrix)):
 		print(ak[i])
 
 	# Print eigenvalues
-	eVal = get_eigenvalues(matrix, 0.01)
+	eVal = get_eigenvalues(matrix, 0.01, None)
 	print("\nEigenvalues are:")
 	print(eVal)
 
 	# Print eigenvectors
 	print("\nEigenvectors are:")
-	for i in range (len(qk)):
-		print(qk[i])
+	qK = get_eigenvectors(matrix, 0.01)
+	for i in range (len(qK)):
+		print(qK[i])
 
 
 # ==============================================================================
