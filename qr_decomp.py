@@ -201,13 +201,25 @@ def create_symmetric_matrix(dimension):
 	return matrix
 
 
-def qr_decomp(m, q, r):
-	q = find_q(m)
-	r = find_r(m, q)
-	return
+def qr_decomp(m):
+	#q = find_q(m)
+	#r = find_r(m, q)
+	q = []
+	u = find_u(m)
+	for i in range (len(u)):
+		qRow = normalise(get_column(u, i))
+		q.append(qRow)
+	r = m_m_multiply(q, m)
+	q = transpose(q)
+	#r = m_m_multiply(transpose(q), m)
+
+
+	return (q, r)
 
 def find_r(m, q):
-	return m_m_multiply(transpose(find_q(m)), m)
+	r = m_m_multiply(transpose(q), m)
+	#print(r)
+	return r
 
 def find_q(m):
 	q = []
@@ -285,7 +297,8 @@ def max_abs_upper_triangle(m):
 
 
 def qr_factor_w_shifts(m, qs):
-	shiftId = m_s_multiply(identity_matrix(len(m)), m[len(m) - 1][len(m) - 1])
+	lenM = len(m)
+	shiftId = m_s_multiply(identity_matrix(lenM), m[lenM - 1][lenM - 1])
 	matrix = m_subtract(m, shiftId)
 	q = find_q(matrix)
 	r = find_r(matrix, q)
@@ -295,14 +308,15 @@ def qr_factor_w_shifts(m, qs):
 	qs.append(q)
 	return ak
 
-def qr_it_w_shifts(m, threshold, qs):
-	if qs == None:
-		qs = []
-	ak = qr_factor_w_shifts(m, qs)
-	uT = max_abs_upper_triangle(ak)
-	if uT > threshold:
-		ak = qr_it_w_shifts(ak, threshold, qs)
-	return ak
+# Recursive.. 
+# def qr_it_w_shifts(m, threshold, qs):
+# 	if qs == None:
+# 		qs = []
+# 	ak = qr_factor_w_shifts(m, qs)
+# 	uT = max_abs_upper_triangle(ak)
+# 	if uT > threshold:
+# 		ak = qr_it_w_shifts(ak, threshold, qs)
+# 	return ak
 
 def qr_iterative(m, threshold, qs):
 	if qs == None:
@@ -310,8 +324,8 @@ def qr_iterative(m, threshold, qs):
 	ak = qr_factor_w_shifts(m, qs)
 	while (max_abs_upper_triangle(ak) > threshold):
 		ak  = qr_factor_w_shifts(ak, qs)
-		print("ak is:")
-		print(ak)
+		# print("ak is:")
+		# print(ak)
 	return ak
 
 
@@ -413,7 +427,7 @@ def main(argv=None):
 		sourceFile = open(args.filePath, 'r')
 		for line in sourceFile:
 			numberStrs = line.split()
-			nums = [int(x) for x in numberStrs]
+			nums = [float(x) for x in numberStrs]
 			matrix.append(nums)		
 		sourceFile.close()
 
@@ -432,7 +446,6 @@ def main(argv=None):
 	print("")
 	q = find_q(matrix)
 	print("Q IS:")
-
 	for i in range (len(q)):
 		print(q[i])
 	print("")
@@ -444,7 +457,17 @@ def main(argv=None):
 	print("")
 
 
-	
+	q1, r1 = qr_decomp(matrix)
+	print("Q1 IS:")
+	for i in range (len(q1)):
+		print(q1[i])
+	print("")
+	print("R1 IS:")
+	for i in range (len(r1)):
+		print(r1[i])
+	print("")
+
+
 	# Print qr iteration
 	# ak1 = qr_it(matrix, 0.01, [])
 	# print("\nQR WITHOUT SHIFTS\n")
@@ -452,23 +475,23 @@ def main(argv=None):
 	#  	print(ak1[i])
 
 	# Print shifted qr it
-	print("Final QR (calculated with shifts):")
-	qs = None
-	#ak = qr_it_w_shifts(matrix, 0.000001, qs)
-	ak = qr_iterative(matrix, 0.0001, qs)
-	for i in range (len(matrix)):
-		print(ak[i])
+	# print("Final QR (calculated with shifts):")
+	# qs = None
+	# #ak = qr_it_w_shifts(matrix, 0.000001, qs)
+	# ak = qr_iterative(matrix, 0.0001, qs)
+	# for i in range (len(matrix)):
+	# 	print(ak[i])
 
-	# Print eigenvalues
-	eVal = get_eigenvalues(matrix, 0.01, None)
-	print("\nRounded off eigenvalues are:")
-	print(eVal)
+	# # # Print eigenvalues
+	# eVal = get_eigenvalues(matrix, 0.0001, None)
+	# print("\nRounded off eigenvalues are:")
+	# print(eVal)
 
-	# Print eigenvectors
-	print("\nEigenvectors are:")
-	qK = get_eigenvectors(matrix, 0.01)
-	for i in range (len(qK)):
-		print(qK[i])
+	# # # Print eigenvectors
+	# print("\nEigenvectors are:")
+	# qK = get_eigenvectors(matrix, 0.0001)
+	# for i in range (len(qK)):
+	# 	print(qK[i])
 
 
 # ==============================================================================
