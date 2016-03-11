@@ -285,8 +285,6 @@ def max_abs_upper_triangle(m):
 
 
 def qr_factor_w_shifts(m, qs):
-	if qs == None:
-		qs = []
 	shiftId = m_s_multiply(identity_matrix(len(m)), m[len(m) - 1][len(m) - 1])
 	matrix = m_subtract(m, shiftId)
 	q = find_q(matrix)
@@ -306,9 +304,23 @@ def qr_it_w_shifts(m, threshold, qs):
 		ak = qr_it_w_shifts(ak, threshold, qs)
 	return ak
 
+def qr_iterative(m, threshold, qs):
+	if qs == None:
+		qs = []
+	ak = qr_factor_w_shifts(m, qs)
+	while (max_abs_upper_triangle(ak) > threshold):
+		ak  = qr_factor_w_shifts(ak, qs)
+		print("ak is:")
+		print(ak)
+	return ak
+
+
+
+
 def get_eigenvalues(m, threshold, qs):
 	values = []
-	ak = qr_it_w_shifts(m, threshold, qs)
+	#ak = qr_it_w_shifts(m, threshold, qs)
+	ak = qr_iterative(m , threshold, qs)
 	for r in range (len(ak)):
 		for c in range (len(ak)):
 			if c == r:
@@ -319,32 +331,31 @@ def get_eigenvalues(m, threshold, qs):
 
 
 
-def qr_factor(matrix, qs):
-	q = find_q(matrix)
-	r = find_r(matrix, q)
-	ak = m_m_multiply(r, q)
-	qs.append(q)
-	return ak
+# def qr_factor(matrix, qs):
+# 	q = find_q(matrix)
+# 	r = find_r(matrix, q)
+# 	ak = m_m_multiply(r, q)
+# 	qs.append(q)
+# 	return ak
 
 
-def qr_it(m, threshold, qs):
-	if qs == None:
-		qs = []
-	ak = qr_factor(m, qs)
-	uT = max_abs_upper_triangle(ak)
-	if uT > threshold:
-		ak = qr_it(ak, threshold, qs)
-	return ak
+# def qr_it(m, threshold, qs):
+# 	if qs == None:
+# 		qs = []
+# 	ak = qr_factor(m, qs)
+# 	uT = max_abs_upper_triangle(ak)
+# 	if uT > threshold:
+# 		ak = qr_it(ak, threshold, qs)
+# 	return ak
 
 def get_eigenvectors(m, threshold):
 	qs = []
 	counter = 0
-	_ = qr_it_w_shifts(m, threshold, qs)
+	#_ = qr_it_w_shifts(m, threshold, qs)
+	_ = qr_iterative(m, threshold, qs)
 	qk = identity_matrix(len(m))
-	for i in range (0, len(qs)):
+	for i in range (len(qs)):
 		qk = m_m_multiply(qk, qs[i])
-	
-
 	# Lines them up to be read as is
 	return transpose(qk)
 
@@ -416,109 +427,7 @@ def main(argv=None):
 		print(matrix[i])
 
 	
-	# Print determinant of matrix
-	# t = determinant(matrix)
-	# print("")
-	# print(t)
-
-
-	# Print transpose of matrix
-	# t = transpose(matrix)
-	# print("Transpose of matrix is:")
-	# for i in range (0,dimension):
-	# 	print(t[i])
-
-	# Print inverse of matrix
-	# inv = inverse(matrix)
-	# print("Inverse of matrix is:")
-	# for i in range (0,dimension):
-	# 	print(inv[i])
-
-	# Print scalar multiplication of matrix
-	# s = m_s_multiply(matrix, 2)
-	# print("Scalar of matrix is:")
-	# for i in range (0,dimension):
-	# 	print(s[i])
-
-
-	# adjugate = adjugate_matrix(matrix)
-	# print("adjugate Matrix is:")
-	# for i in range (0, dimension):
-	# 	print(adjugate[i])
-
-	# Print multiplication of matrices
-	# v1 = [-6, 8]
-	# v2 = [5, 12]
-	# m3 = m_m_multiply(v1, v2)
-	# print("Matrix times inverse  is ")
-	# for i in range (0, len(m3)):
-	# 	print(m3[i])
-
-	# Print dot product of vectors
-	# v1 = [-6, 8]
-	# v2 = [5, 12]
-	# v3 = dot_product(v1, v2)
-	# print("Dot product of v1 and 2 is")
-	# print(v3)
-
-	# Print determinant of matrix 
-	# d = determinant(matrix)
-	# print("")
-	# print(d)
-
-	# Print removing a row from a matrix 
-	# n = remove_row(matrix, 1)
-	# print("")
-	# for i in range (0, dimension-1):
-	# 	print(n[i])
-
-	# Print removing a column from a matrix 
-	# y = remove_column(matrix, 0)
-	# print("")
-	# for i in range (0, dimension):
-	# 	print(y[i])
-
-	# Print sum of 2 matrices
-	# y = sum(matrix, inv)
-	# print("")
-	# for i in range (0, dimension):
-	# 	print(y[i])
-
-	# Print subtraction of 2 matrices
-	# y = subtract(matrix, inv)
-	# print("")
-	# for i in range (0, dimension):
-	# 	print(y[i])
-
-	# Print normalised vector
-	# print(matrix[0])
-	# v = normalise(matrix[0])
-	# print("")
-	# for i in range (0, len(v)):
-	# 	print(v[i])
-
-	# Print column, row of a vector
-	# c = get_column(matrix, 0)
-	# print("")
-	# print(c)
-	# r = get_row(matrix, 1)
-	# print("")
-	# print(r)
-
-	# Print u of matrix
-	# u = find_u(matrix)
-	# print("U is:")
-	# for i in range (0, len(u)):
-	# 	print(u[i])
-
-	# print("U should be:")
-	# print("[12, -69, -58/5]\n[6, 158, 6/5]\n[-4, 30,-33]")
-
-	# q = find_q(matrix)
-	# print("Q is:")
-	# for i in range (len(q)):
-	# 	print(q[i])
-
+	
 	# Print QR Decomposition
 	print("")
 	q = find_q(matrix)
@@ -535,49 +444,25 @@ def main(argv=None):
 	print("")
 
 
-	# Print power iteration of a matrix
-	# v = []
-	# v.append(1)
-	# for i in range (len(matrix) - 1):
-	# 	v.append(0)
-
-	# print("v is:")
-	# print(v)
-
-	# eigenvalue = power_it(matrix, v, 0.001, None)
-
-	# print("eigenvalue is:")
-	# print(eigenvalue)
-
-	# Print upper triangular max
-	# uMax = max_abs_upper_triangle(matrix)
-	# print("uMax is:")
-	# print(uMax)
-
-	# Print id matrix
-	# im = identity_matrix(dimension)
-	# print("")
-	# print("im is:")
-	# for i in range (dimension):
-	# 	print(im[i])
-
+	
 	# Print qr iteration
-	ak1 = qr_it(matrix, 0.01, [])
-	print("\nQR WITHOUT SHIFTS\n")
-	for i in range (len(matrix)):
-	 	print(ak1[i])
+	# ak1 = qr_it(matrix, 0.01, [])
+	# print("\nQR WITHOUT SHIFTS\n")
+	# for i in range (len(matrix)):
+	#  	print(ak1[i])
 
 	# Print shifted qr it
-	# print("\nQR WITH SHIFTS:")
-	# qs = None
-	# ak = qr_it_w_shifts(matrix, 0.01, qs, 0)
-	# for i in range (len(matrix)):
-	# 	print(ak[i])
+	print("Final QR (calculated with shifts):")
+	qs = None
+	#ak = qr_it_w_shifts(matrix, 0.000001, qs)
+	ak = qr_iterative(matrix, 0.0001, qs)
+	for i in range (len(matrix)):
+		print(ak[i])
 
 	# Print eigenvalues
-	# eVal = get_eigenvalues(matrix, 0.01, None)
-	# print("\nEigenvalues are:")
-	# print(eVal)
+	eVal = get_eigenvalues(matrix, 0.01, None)
+	print("\nRounded off eigenvalues are:")
+	print(eVal)
 
 	# Print eigenvectors
 	print("\nEigenvectors are:")
