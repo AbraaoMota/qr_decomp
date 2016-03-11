@@ -17,7 +17,6 @@ def transpose(m):
 		mT.append(rowT)
 	return mT
 
-
 def remove_row(m, row):
 	newMatrix = []
 	for r in range(0, len(m)):
@@ -32,11 +31,9 @@ def remove_column(m, column):
 		newRow = []
 		for c in range (0, len(m[0])):
 			if c != column:
-				newRow.append(m[r][c])
-			
+				newRow.append(m[r][c])			
 		newMatrix.append(newRow)
 	return newMatrix
-
 
 def determinant(m):
 	if len(m) == 2:
@@ -68,7 +65,6 @@ def m_s_multiply(m1, n):
 		rowM = []
 		for column in range (0, len(m1[0])):
 			product = m1[row][column] * n
-			product = round(product, 10)
 			rowM.append(product)
 		m3.append(rowM)
 	return m3
@@ -126,22 +122,16 @@ def m_m_multiply(m1, m2):
 			product = 0
 			for c in range(0, len(m1[0])):
 				product += m1[row][c] * m2[c][column]
-				product = round(product, 8)
 			rowM.append(product)
 		m3.append(rowM)
 	return m3
-
 
 def m_v_multiply(m, v):
 	m2 = []
 	for row in range (0, len(m)):
 		product = 0
 		for column in range (0, len(m[0])):
-			#for c in range(0, len(m[0])):
 			product += m[row][column] * v[column]
-
-			product = round(product, 8)
-			#rowM.append(product)
 		m2.append(product)
 	return m2
 
@@ -168,7 +158,7 @@ def adjugate_matrix(m):
 		cofactor.append(newRow)
 	return transpose(cofactor)
 
-def normalise(v):
+def v_normalise(v):
 	newV = []
 	squaredSum = 0
 	for i in range (0, len(v)):
@@ -179,199 +169,6 @@ def normalise(v):
 	for j in range (0, len(v)):
 		newV.append(v[j] / norm)
 	return newV
-
-
-
-#======================================================================
-# Random symmetric matrix generator. Generates random floats in the range -100000, 100000
-def create_symmetric_matrix(dimension):
-	matrix = []
-	columns_covered = 0
-
-	for r in range (0, dimension):
-		row = []
-		for c in range (0, dimension):
-			if columns_covered > 0 and c < columns_covered:
-				row.append(matrix[c][r])
-			else:
-				row.append(random.random() * random.randint(-100000, 100000))
-		matrix.append(row)
-		columns_covered += 1
-
-	return matrix
-
-
-def qr_decomp(m):
-	#q = find_q(m)
-	#r = find_r(m, q)
-	q = []
-	u = find_u(m)
-	for i in range (len(u)):
-		qRow = normalise(get_column(u, i))
-		q.append(qRow)
-	r = m_m_multiply(q, m)
-	q = transpose(q)
-	#r = m_m_multiply(transpose(q), m)
-
-
-	return (q, r)
-
-def find_r(m, q):
-	r = m_m_multiply(transpose(q), m)
-	#print(r)
-	return r
-
-def find_q(m):
-	q = []
-	u = find_u(m)
-	for i in range (len(u)):
-		qRow = normalise(get_column(u, i))
-		q.append(qRow)
-	return transpose(q)
-
-def find_u(m):
-	u = [[] for x in range(len(m))]
-	for l in range (len(u)):
-		u[l].append(m[l][0])
-
-	for c in range (1, len(m[0])):
-		mN = get_column(m, c)
-		mNcopy = mN[:]
-
-		vectorSum = [0] * len(m[0])
-		for k in range (0, c):
-			eC = normalise(get_column(u, k))
-
-			vectorSum = v_sum(vectorSum, v_s_multiply(eC, dot_product(mNcopy, eC)))
-
-		uC = v_subtract(mN, vectorSum)
-
-		for r in range (len(m)):
-			u[r].append(uC[r])
-	return u
-
-
-
-def identity_matrix(n):
-	m = []
-	for r in range (n):
-		mRow = []
-		for c in range (n):
-			if c == r:
-				mRow.append(1)
-			else:
-				mRow.append(0)
-		m.append(mRow)
-	return m
-
-
-def get_row(m, n):
-	return m[n]
-
-def get_column(m, n):
-	col = []
-	for r in range (len(m)):
-		for c in range (len(m[0])):
-			if c == n:
-				col.append(m[r][c])
-	return col
-
-
-# Finds the first and largest eigenvalue by power iteration
-# def power_it(matrix, init_v, threshold, prevRatio):
-# 	xk = m_v_multiply(matrix, init_v)
-# 	ratio = xk[0] / init_v[0]
-# 	if (prevRatio != None and abs(ratio - prevRatio) < threshold):
-# 		return ratio
-# 	else:
-# 		return power_it(matrix, xk, threshold, ratio)
-
-def max_abs_upper_triangle(m):
-	utMax = abs(m[0][1])
-	for r in range (len(m)):
-		for c in range (r+1, len(m)):
-			mRC = m[r][c]
-			if abs(mRC) > utMax:
-				utMax = abs(mRC)
-	return utMax
-
-
-def qr_factor_w_shifts(m, qs):
-	lenM = len(m)
-	shiftId = m_s_multiply(identity_matrix(lenM), m[lenM - 1][lenM - 1])
-	matrix = m_subtract(m, shiftId)
-	q = find_q(matrix)
-	r = find_r(matrix, q)
-	rq = m_m_multiply(r, q)
-	ak = m_add(rq, shiftId)
-
-	qs.append(q)
-	return ak
-
-# Recursive.. 
-# def qr_it_w_shifts(m, threshold, qs):
-# 	if qs == None:
-# 		qs = []
-# 	ak = qr_factor_w_shifts(m, qs)
-# 	uT = max_abs_upper_triangle(ak)
-# 	if uT > threshold:
-# 		ak = qr_it_w_shifts(ak, threshold, qs)
-# 	return ak
-
-def qr_iterative(m, threshold, qs):
-	if qs == None:
-		qs = []
-	ak = qr_factor_w_shifts(m, qs)
-	while (max_abs_upper_triangle(ak) > threshold):
-		ak  = qr_factor_w_shifts(ak, qs)
-		# print("ak is:")
-		# print(ak)
-	return ak
-
-
-
-
-def get_eigenvalues(m, threshold, qs):
-	values = []
-	#ak = qr_it_w_shifts(m, threshold, qs)
-	ak = qr_iterative(m , threshold, qs)
-	for r in range (len(ak)):
-		for c in range (len(ak)):
-			if c == r:
-				eVal = ak[r][c]
-				eVal = round(eVal, 4)
-				values.append(eVal)
-	return values
-
-
-
-# def qr_factor(matrix, qs):
-# 	q = find_q(matrix)
-# 	r = find_r(matrix, q)
-# 	ak = m_m_multiply(r, q)
-# 	qs.append(q)
-# 	return ak
-
-
-# def qr_it(m, threshold, qs):
-# 	if qs == None:
-# 		qs = []
-# 	ak = qr_factor(m, qs)
-# 	uT = max_abs_upper_triangle(ak)
-# 	if uT > threshold:
-# 		ak = qr_it(ak, threshold, qs)
-# 	return ak
-
-def get_eigenvectors(m, threshold):
-	qs = []
-	counter = 0
-	#_ = qr_it_w_shifts(m, threshold, qs)
-	_ = qr_iterative(m, threshold, qs)
-	qk = identity_matrix(len(m))
-	for i in range (len(qs)):
-		qk = m_m_multiply(qk, qs[i])
-	# Lines them up to be read as is
-	return transpose(qk)
 
 def m_normalise(m):
 	normQ = []
@@ -386,6 +183,215 @@ def m_normalise(m):
 		normQ.append(normRow)
 	return normQ
 
+def zero_matrix(dimension):
+	m = []
+	for r in range (dimension):
+		mRow = []
+		for c in range (dimension):
+			mRow.append(0)
+		m.append(mRow)
+	return m
+
+def identity_matrix(n):
+	m = []
+	for r in range (n):
+		mRow = []
+		for c in range (n):
+			if c == r:
+				mRow.append(1)
+			else:
+				mRow.append(0)
+		m.append(mRow)
+	return m
+
+def get_row(m, n):
+	return m[n]
+
+def get_column(m, n):
+	col = []
+	for r in range (len(m)):
+		for c in range (len(m[0])):
+			if c == n:
+				col.append(m[r][c])
+	return col
+
+def max_abs_upper_triangle(m):
+	utMax = abs(m[0][1])
+	for r in range (len(m)):
+		for c in range (r+1, len(m)):
+			mRC = m[r][c]
+			if abs(mRC) > utMax:
+				utMax = abs(mRC)
+	return utMax
+
+
+# Random symmetric matrix generator. Generates random floats in the range -100000, 100000
+def create_symmetric_matrix(dimension):
+	matrix = []
+	columns_covered = 0
+	for r in range (0, dimension):
+		row = []
+		for c in range (0, dimension):
+			if columns_covered > 0 and c < columns_covered:
+				row.append(matrix[c][r])
+			else:
+				row.append(random.random() * random.randint(-100000, 100000))
+		matrix.append(row)
+		columns_covered += 1
+
+	return matrix
+
+
+#======================================================================
+####################################################################################
+
+def find_u(m):
+	u = [[] for x in range(len(m))]
+	for l in range (len(u)):
+		u[l].append(m[l][0])
+	for c in range (1, len(m[0])):
+		mN = get_column(m, c)
+		mNcopy = mN[:]
+		vectorSum = [0] * len(m[0])
+		for k in range (0, c):
+			eC = v_normalise(get_column(u, k))
+			vectorSum = v_sum(vectorSum, v_s_multiply(eC, dot_product(mNcopy, eC)))
+		uC = v_subtract(mN, vectorSum)
+		for r in range (len(m)):
+			u[r].append(uC[r])
+	return u
+
+
+def qr_decomp(m):
+
+	# u = [[] for x in range(len(m))]
+	# for l in range (len(u)):
+	# 	u[l].append(m[l][0])
+	# for c in range (1, len(m[0])):
+	# 	mN = get_column(m, c)
+	# 	mNcopy = mN[:]
+	# 	vectorSum = [0] * len(m[0])
+	# 	for k in range (0, c):
+	# 		eC = v_normalise(get_column(u, k))
+	# 		vectorSum = v_sum(vectorSum, v_s_multiply(eC, dot_product(mNcopy, eC)))
+	# 	uC = v_subtract(mN, vectorSum)
+	# 	for r in range (len(m)):
+	# 		u[r].append(uC[r])
+	# #return u
+	# q = [[] for x in range(len(m))]
+	# for l in range (len(q)):
+	# 	q[l].append(m[l][0])
+	# for c in range (1, len(m[0])):
+	# 	mN = get_column(m, c)
+	# 	mNcopy = mN[:]
+	# 	vectorSum = [0] * len(m[0])
+	# 	for k in range (c):
+	# 		eC = v_normalise(get_column(q, k))
+	# 		vectorSum = v_sum(vectorSum, v_s_multiply(eC, dot_product(mNcopy, eC)))
+	# 	qC = v_subtract(mN, vectorSum)
+	# 	for r in range (len(m)):
+	# 		qRow = v_normalise(get_column(q, r))
+	# 		q.append(qRow)
+	# 		#u[r].append(uC[r])
+	
+
+
+	# q = zero_matrix(len(m))
+	
+
+	# for k in range (len(q)):
+
+	# 	for j in range (1, k-1):
+
+	# 		v_s_multiply(eC, dot_product(mNcopy, eC))
+	# 	uRow = v_subtract(get_column(m, k) - vectorSum)
+	# 	qRow = v_normalise(uRow)
+	# 	q[k] = qRow
+	# q = transpose(q)
+
+
+	# for l in range (len(q)):
+	#  	q[l].append(m[l][0])
+	# for c in range (1, len(m[0])):
+	# 	mN = get_column(m, c)
+	# 	mNcopy = mN[:]
+	# 	vectorSum = [0] * len(m[0])
+	# 	for k in range (0, c):
+	# 		eC = v_normalise(get_column(u, k))
+	# 		vectorSum = v_sum(vectorSum, v_s_multiply(eC, dot_product(mNcopy, eC)))
+	# 	uC = v_subtract(mN, vectorSum)
+	# 	for r in range (len(m)):
+	# 		u[r].append(uC[r])
+
+
+	#qTRow = v_normalise(get_row(m), i)
+
+
+
+
+
+
+
+
+	q = []	
+	u = find_u(m)
+	for i in range (len(u)):
+		qRow = v_normalise(get_column(u, i))
+		q.append(qRow)
+	q = transpose(q)
+	r = zero_matrix(len(m))
+	for row in range (len(m)):
+		for c in range (row, len(m)):
+			r[row][c] = dot_product(get_column(q, row), get_column(m, c))
+
+	return (q, r)
+
+
+
+
+
+def qr_factor(m, qs):
+	lenM = len(m)
+	shiftId = m_s_multiply(identity_matrix(lenM), m[lenM - 1][lenM - 1])
+	matrix = m_subtract(m, shiftId)
+	(q, r) = qr_decomp(matrix)
+	rq = m_m_multiply(r, q)
+	ak = m_add(rq, shiftId)
+	qs.append(q)
+	return ak
+
+def qr_iterative(m, threshold, qs):
+	if qs == None:
+		qs = []
+	ak = qr_factor(m, qs)
+	while (max_abs_upper_triangle(ak) > threshold):
+		ak  = qr_factor(ak, qs)
+	return ak
+
+
+def get_eigenvalues(m, threshold, qs):
+	values = []
+	#ak = qr_it_w_shifts(m, threshold, qs)
+	ak = qr_iterative(m , threshold, qs)
+	for r in range (len(ak)):
+		for c in range (len(ak)):
+			if c == r:
+				eVal = ak[r][c]
+				#eVal = round(eVal, 4)
+				values.append(eVal)
+	return values
+
+
+def get_eigenvectors(m, threshold):
+	qs = []
+	counter = 0
+	#_ = qr_it_w_shifts(m, threshold, qs)
+	_ = qr_iterative(m, threshold, qs)
+	qk = identity_matrix(len(m))
+	for i in range (len(qs)):
+		qk = m_m_multiply(qk, qs[i])
+	
+	return qk
 
 
 #======================================================================
@@ -437,57 +443,43 @@ def main(argv=None):
 
 	
 	# Print the matrix
+	print("The Matrix given is:")
 	for i in range (0,dimension):
 		print(matrix[i])
 
-	
-	
 	# Print QR Decomposition
 	print("")
-	q = find_q(matrix)
+	(q, r) = qr_decomp(matrix)
 	print("Q IS:")
 	for i in range (len(q)):
 		print(q[i])
 	print("")
-
-	r = find_r(matrix, q)
 	print("R IS:")
 	for i in range (len(r)):
 		print(r[i])
 	print("")
 
-
-	q1, r1 = qr_decomp(matrix)
-	print("Q1 IS:")
-	for i in range (len(q1)):
-		print(q1[i])
-	print("")
-	print("R1 IS:")
-	for i in range (len(r1)):
-		print(r1[i])
+	u = find_u(matrix)
+	print("U IS:")
+	for i in range (len(u)):
+		print(u[i])
 	print("")
 
 
-	# Print qr iteration
-	# ak1 = qr_it(matrix, 0.01, [])
-	# print("\nQR WITHOUT SHIFTS\n")
-	# for i in range (len(matrix)):
-	#  	print(ak1[i])
 
-	# Print shifted qr it
+	# Print shifted qr iteration
 	# print("Final QR (calculated with shifts):")
 	# qs = None
-	# #ak = qr_it_w_shifts(matrix, 0.000001, qs)
 	# ak = qr_iterative(matrix, 0.0001, qs)
 	# for i in range (len(matrix)):
 	# 	print(ak[i])
 
-	# # # Print eigenvalues
+	# Print eigenvalues
 	# eVal = get_eigenvalues(matrix, 0.0001, None)
 	# print("\nRounded off eigenvalues are:")
 	# print(eVal)
 
-	# # # Print eigenvectors
+	# Print eigenvectors
 	# print("\nEigenvectors are:")
 	# qK = get_eigenvectors(matrix, 0.0001)
 	# for i in range (len(qK)):
