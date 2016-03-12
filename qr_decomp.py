@@ -254,6 +254,13 @@ def find_u(m):
 		mNcopy = mN[:]
 		vectorSum = [0] * len(m[0])
 		for k in range (0, c):
+
+			squaredSum = 0
+			for i in range (0, len(u)):
+				squaredSum += u[i][row] ** 2
+			norm = math.sqrt(squaredSum)
+
+
 			eC = v_normalise(get_column(u, k))
 			vectorSum = v_sum(vectorSum, v_s_multiply(eC, dot_product(mNcopy, eC)))
 		uC = v_subtract(mN, vectorSum)
@@ -264,11 +271,16 @@ def find_u(m):
 
 def qr_decomp(m):
 	q = []	
+	
+
+
 	u = find_u(m)
 	for i in range (len(u)):
 		qRow = v_normalise(get_column(u, i))
 		q.append(qRow)
 	q = transpose(q)
+	
+
 	r = zero_matrix(len(m))
 	for row in range (len(m)):
 		squaredSum = 0
@@ -278,13 +290,11 @@ def qr_decomp(m):
 		norm = math.sqrt(squaredSum)
 		for c in range (row, len(m)):
 			if norm != 0:
+				# Only divide by the norm at the end to avoid loss of accuracy
 				r[row][c] = dot_product(get_column(m, c), (get_column(u, row))) / norm
 			else:
 				r[row][c] = 0
 	return (q, r)
-
-
-
 
 
 def qr_factor(m, qs):
@@ -375,7 +385,7 @@ def main(argv=None):
 
 	
 	# Print the matrix
-	print("The Matrix given is:")
+	print("The matrix given is:")
 	for i in range (0,dimension):
 		print(matrix[i])
 
@@ -398,22 +408,18 @@ def main(argv=None):
 	print("")
 
 	# Print shifted qr iteration
-	print("Final QR (calculated with shifts):")
-	qs = None
-	ak = qr_iterative(matrix, 0.0001, qs)
-	for i in range (len(matrix)):
-		print(ak[i])
 
-	# Print eigenvalues
-	eVal = get_eigenvalues(matrix, 0.0001, None)
-	print("\nEigenvalues are:")
-	print(eVal)
+
+	# # Print eigenvalues
+	# eVal = get_eigenvalues(matrix, 0.0001, None)
+	# print("\nEigenvalues are:")
+	# print(eVal)
 
 	# Print eigenvectors
-	print("\nEigenvectors are:")
-	qK = get_eigenvectors(matrix, 0.0001)
-	for i in range (len(qK)):
-		print(qK[i])
+	# print("\nEigenvectors are:")
+	# qK = get_eigenvectors(matrix, 0.0001)
+	# for i in range (len(qK)):
+	# 	print(qK[i])
 
 
 # ==============================================================================
