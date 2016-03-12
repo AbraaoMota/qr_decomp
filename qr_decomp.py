@@ -263,76 +263,6 @@ def find_u(m):
 
 
 def qr_decomp(m):
-
-	# u = [[] for x in range(len(m))]
-	# for l in range (len(u)):
-	# 	u[l].append(m[l][0])
-	# for c in range (1, len(m[0])):
-	# 	mN = get_column(m, c)
-	# 	mNcopy = mN[:]
-	# 	vectorSum = [0] * len(m[0])
-	# 	for k in range (0, c):
-	# 		eC = v_normalise(get_column(u, k))
-	# 		vectorSum = v_sum(vectorSum, v_s_multiply(eC, dot_product(mNcopy, eC)))
-	# 	uC = v_subtract(mN, vectorSum)
-	# 	for r in range (len(m)):
-	# 		u[r].append(uC[r])
-	# #return u
-	# q = [[] for x in range(len(m))]
-	# for l in range (len(q)):
-	# 	q[l].append(m[l][0])
-	# for c in range (1, len(m[0])):
-	# 	mN = get_column(m, c)
-	# 	mNcopy = mN[:]
-	# 	vectorSum = [0] * len(m[0])
-	# 	for k in range (c):
-	# 		eC = v_normalise(get_column(q, k))
-	# 		vectorSum = v_sum(vectorSum, v_s_multiply(eC, dot_product(mNcopy, eC)))
-	# 	qC = v_subtract(mN, vectorSum)
-	# 	for r in range (len(m)):
-	# 		qRow = v_normalise(get_column(q, r))
-	# 		q.append(qRow)
-	# 		#u[r].append(uC[r])
-	
-
-
-	# q = zero_matrix(len(m))
-	
-
-	# for k in range (len(q)):
-
-	# 	for j in range (1, k-1):
-
-	# 		v_s_multiply(eC, dot_product(mNcopy, eC))
-	# 	uRow = v_subtract(get_column(m, k) - vectorSum)
-	# 	qRow = v_normalise(uRow)
-	# 	q[k] = qRow
-	# q = transpose(q)
-
-
-	# for l in range (len(q)):
-	#  	q[l].append(m[l][0])
-	# for c in range (1, len(m[0])):
-	# 	mN = get_column(m, c)
-	# 	mNcopy = mN[:]
-	# 	vectorSum = [0] * len(m[0])
-	# 	for k in range (0, c):
-	# 		eC = v_normalise(get_column(u, k))
-	# 		vectorSum = v_sum(vectorSum, v_s_multiply(eC, dot_product(mNcopy, eC)))
-	# 	uC = v_subtract(mN, vectorSum)
-	# 	for r in range (len(m)):
-	# 		u[r].append(uC[r])
-
-
-	#qTRow = v_normalise(get_row(m), i)
-
-
-
-
-
-
-
-
 	q = []	
 	u = find_u(m)
 	for i in range (len(u)):
@@ -341,9 +271,16 @@ def qr_decomp(m):
 	q = transpose(q)
 	r = zero_matrix(len(m))
 	for row in range (len(m)):
+		squaredSum = 0
+		for i in range (0, len(u)):
+			#print("adding %f" % u[i][row])
+			squaredSum += u[i][row] ** 2
+		norm = math.sqrt(squaredSum)
 		for c in range (row, len(m)):
-			r[row][c] = dot_product(get_column(q, row), get_column(m, c))
-
+			if norm != 0:
+				r[row][c] = dot_product(get_column(m, c), (get_column(u, row))) / norm
+			else:
+				r[row][c] = 0
 	return (q, r)
 
 
@@ -365,32 +302,27 @@ def qr_iterative(m, threshold, qs):
 		qs = []
 	ak = qr_factor(m, qs)
 	while (max_abs_upper_triangle(ak) > threshold):
-		ak  = qr_factor(ak, qs)
+		ak = qr_factor(ak, qs)
 	return ak
 
 
 def get_eigenvalues(m, threshold, qs):
 	values = []
-	#ak = qr_it_w_shifts(m, threshold, qs)
 	ak = qr_iterative(m , threshold, qs)
 	for r in range (len(ak)):
 		for c in range (len(ak)):
 			if c == r:
 				eVal = ak[r][c]
-				#eVal = round(eVal, 4)
 				values.append(eVal)
 	return values
 
 
 def get_eigenvectors(m, threshold):
 	qs = []
-	counter = 0
-	#_ = qr_it_w_shifts(m, threshold, qs)
 	_ = qr_iterative(m, threshold, qs)
 	qk = identity_matrix(len(m))
 	for i in range (len(qs)):
 		qk = m_m_multiply(qk, qs[i])
-	
 	return qk
 
 
@@ -465,25 +397,23 @@ def main(argv=None):
 		print(u[i])
 	print("")
 
-
-
 	# Print shifted qr iteration
-	# print("Final QR (calculated with shifts):")
-	# qs = None
-	# ak = qr_iterative(matrix, 0.0001, qs)
-	# for i in range (len(matrix)):
-	# 	print(ak[i])
+	print("Final QR (calculated with shifts):")
+	qs = None
+	ak = qr_iterative(matrix, 0.0001, qs)
+	for i in range (len(matrix)):
+		print(ak[i])
 
 	# Print eigenvalues
-	# eVal = get_eigenvalues(matrix, 0.0001, None)
-	# print("\nRounded off eigenvalues are:")
-	# print(eVal)
+	eVal = get_eigenvalues(matrix, 0.0001, None)
+	print("\nEigenvalues are:")
+	print(eVal)
 
 	# Print eigenvectors
-	# print("\nEigenvectors are:")
-	# qK = get_eigenvectors(matrix, 0.0001)
-	# for i in range (len(qK)):
-	# 	print(qK[i])
+	print("\nEigenvectors are:")
+	qK = get_eigenvectors(matrix, 0.0001)
+	for i in range (len(qK)):
+		print(qK[i])
 
 
 # ==============================================================================
