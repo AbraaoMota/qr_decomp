@@ -366,7 +366,7 @@ def get_raw_eigenvalues(m, threshold, qs):
 # Retrieve eigenvectors from m (recalculates everything)
 def get_raw_eigenvectors(m, threshold):
 	qs = []
-	ak = qr_iterative(m, threshold, qs)
+	_ = qr_iterative(m, threshold, qs)
 	qk = identity_matrix(len(m))
 	# Multiply each of the Q's in the qs list to get the eigenvectors
 	for i in range (len(qs)):
@@ -480,18 +480,11 @@ def main(argv=None):
 	print("\nEigenvalues are:")
 	print(eVal)
 
-	# # Print raw eigenvalues
-	# eVal = get_raw_eigenvalues(matrix, 0.0001, None)
-	# print("\nEigenvalues are:")
-	# print(eVal)
-
 	# Print eigenvectors
 	print("\nEigenvectors are:")
 	qK = get_eigenvectors(qs)
 	for i in range (len(qK)):
 		print(qK[i])
-
-
 
 	# Print eigenvectors
 	print("\nEigenvectors are:")
