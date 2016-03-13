@@ -189,14 +189,14 @@ def zero_matrix(dimension):
 	for r in range (dimension):
 		mRow = []
 		for c in range (dimension):
-			mRow.append(0)
+			mRow.append(float(0))
 		m.append(mRow)
 	return m
 
 def zero_vector(dimension):
 	m = []
 	for c in range (dimension):
-		m.append(0)
+		m.append(float(0))
 	return m
 
 def identity_matrix(n):
@@ -261,13 +261,6 @@ def find_u(m):
 		mNcopy = mN[:]
 		vectorSum = [0] * len(m[0])
 		for k in range (0, c):
-
-			# squaredSum = 0
-			# for i in range (0, len(u)):
-			# 	squaredSum += u[i][row] ** 2
-			# norm = math.sqrt(squaredSum)
-
-
 			eC = v_normalise(get_column(u, k))
 			vectorSum = v_sum(vectorSum, v_s_multiply(eC, dot_product(mNcopy, eC)))
 		uC = v_subtract(mN, vectorSum)
@@ -275,112 +268,126 @@ def find_u(m):
 			u[r].append(uC[r])
 	return u
 
+def find_r(m, q):
+	return m_m_multiply(transpose(q), m)
 
-def qr_decomp(m):
-	q = []	
-	r = zero_matrix(len(m))
-	u = zero_matrix(len(m))
-	for c in range (len(m)):
-		mN = get_column(m, c)
-		mNcopy = mN[:]
-		vectorSum = zero_vector(len(m))
-		norm = 0
-		for k in range (c):			
-			squaredSum = 0
-			for i in range (len(u)):
-				squaredSum += u[i][k] ** 2
-			# print("Squared sum is:")
-			# print(squaredSum)
-			norm = math.sqrt(squaredSum)
-			uK = get_column(u, k)
-
-			if norm != 0:
-				#vectorSum = v_sum(vectorSum, v_s_multiply(v_s_multiply(uK, dot_product(mNcopy, uK)), 1/(norm * norm)))
-				inter = v_s_multiply(v_s_multiply(uK, dot_product(mNcopy, uK)), 1/(norm * norm))
-				#inter = v_s_multiply(inter, 1/(norm))
-				vectorSum = v_sum(vectorSum, inter)
-			else:
-				vectorSum = zero_vector(len(m))
-
-		# qRow = v_normalise(get_column(u, c))
-		# q.append(qRow)
-
-
-
-
-			# for row in range (len(m)):
-			# 	for c2 in range (row, len(m)):
-			# 		if norm != 0:
-			# 			# Only divide by the norm at the end to avoid loss of accuracy
-			# 			r[row][c2] = dot_product(get_column(m, c2), get_column(u, c2)) / norm
-			# 		else:
-			# 			r[row][c2] = 0
-					# for c1 in range (len(m)):
-					# 	if r[c1][c] == 0:
-					# 		if norm != 0:
-					# 			# Only divide by the norm at the end to avoid loss of accuracy
-					# 			r[c1][c] = dot_product(get_column(m, c), uK) / norm
-					# 		else:
-					# 			r[c1][c] = 0
-
-		uC = v_subtract(mN, vectorSum)
-		for r1 in range (len(m)):
-			u[r1][c] = uC[r1]
-
-
-	for row in range (len(m)):
-		squaredSum = 0
-		for i in range (0, len(u)):
-			#print("adding %f" % u[i][row])
-			squaredSum += u[i][row] ** 2
-		norm = math.sqrt(squaredSum)
-		for c in range (row, len(m)):
-			if norm != 0:
-				# Only divide by the norm at the end to avoid loss of accuracy
-				r[row][c] = dot_product(get_column(m, c), (get_column(u, row))) / norm
-			else:
-				r[row][c] = 0
-	
-	# print("U IS:")
-	# for i in range (len(u)):
-	# 	print(u[i])
-	# print("")
-
+def find_q(m):
+	q = []
+	u = find_u(m)
 	for i in range (len(u)):
-		
 		qRow = v_normalise(get_column(u, i))
 		q.append(qRow)
-	q = transpose(q)
+	return transpose(q)
 
 
+def qr_decomp(m):
+	# q = []	
+	# r = zero_matrix(len(m))
+	# u = zero_matrix(len(m))
+	# for c in range (len(m)):
+	# 	mN = get_column(m, c)
+	# 	mNcopy = mN[:]
+	# 	vectorSum = zero_vector(len(m))
+	# 	norm = 0
+	# 	for k in range (c):			
+	# 		squaredSum = 0
+	# 		for i in range (len(u)):
+	# 			squaredSum += u[i][k] ** 2
+	# 		norm = math.sqrt(squaredSum)
+	# 		uK = get_column(u, k)
+
+	# 		if norm != 0:
+	# 			vectorSum = v_sum(vectorSum, v_s_multiply(v_s_multiply(uK, dot_product(mNcopy, uK)), 1/(norm * norm)))
+	# 			#inter = v_s_multiply(v_s_multiply(uK, dot_product(mNcopy, uK)), 1/(norm * norm))
+	# 			#vectorSum = v_sum(vectorSum, inter)
+	# 		else:
+	# 			vectorSum = zero_vector(len(m))
+
+	# 	# qRow = v_normalise(get_column(u, c))
+	# 	# q.append(qRow)
+
+
+
+
+	# 		# for row in range (len(m)):
+	# 		# 	for c2 in range (row, len(m)):
+	# 		# 		if norm != 0:
+	# 		# 			# Only divide by the norm at the end to avoid loss of accuracy
+	# 		# 			r[row][c2] = dot_product(get_column(m, c2), get_column(u, c2)) / norm
+	# 		# 		else:
+	# 		# 			r[row][c2] = 0
+	# 				# for c1 in range (len(m)):
+	# 				# 	if r[c1][c] == 0:
+	# 				# 		if norm != 0:
+	# 				# 			# Only divide by the norm at the end to avoid loss of accuracy
+	# 				# 			r[c1][c] = dot_product(get_column(m, c), uK) / norm
+	# 				# 		else:
+	# 				# 			r[c1][c] = 0
+
+	# 	uC = v_subtract(mN, vectorSum)
+	# 	for r1 in range (len(m)):
+	# 		u[r1][c] = uC[r1]
+
+
+	# for row in range (len(m)):
+	# 	squaredSum = 0
+	# 	for i in range (0, len(u)):
+	# 		#print("adding %f" % u[i][row])
+	# 		squaredSum += u[i][row] ** 2
+	# 	norm = math.sqrt(squaredSum)
+	# 	for c in range (row, len(m)):
+	# 		if norm != 0:
+	# 			# Only divide by the norm at the end to avoid loss of accuracy
+	# 			r[row][c] = dot_product(get_column(m, c), (get_column(u, row))) / norm
+	# 		else:
+	# 			r[row][c] = 0
+	
+	# # print("U IS:")
+	# # for i in range (len(u)):
+	# # 	print(u[i])
+	# # print("")
+
+	# for i in range (len(u)):
+		
+	# 	qRow = v_normalise(get_column(u, i))
+	# 	q.append(qRow)
+	# q = transpose(q)
+
+	q = find_q(m)
+	r = find_r(m, q)
 	return (q, r)
+
+
 
 
 def qr_factor(m, qs):
 	lenM = len(m)
-
-	shiftId = m_s_multiply(identity_matrix(lenM), m[lenM - 1][lenM - 1])
+	shiftId = m_s_multiply(identity_matrix(lenM), m[lenM-1][lenM-1])
 	matrix = m_subtract(m, shiftId)
 	(q, r) = qr_decomp(matrix)
+	#q = find_q(matrix)
+	#r = find_r(matrix, q)
 	rq = m_m_multiply(r, q)
+
 	ak = m_add(rq, shiftId)
 	qs.append(q)
-
-	# print("Appending this to qs:")
-	# for i in range (len(q)):
-	# 	print(q[i])
-	# print("")
-
 	return ak
 
 def qr_iterative(m, threshold, qs):
 	if qs == None:
 		qs = []
 	ak = qr_factor(m, qs)
-	# print("Qs is:")
-	# print(qs)
+	# print("Ak is:")
+	# for i in range (len(ak)):
+	# 	print(ak[i])
+	# print("")
+	#print(qs)
 	while (max_abs_upper_triangle(ak) > threshold):
 		ak = qr_factor(ak, qs)
+		# print("Ak is:")
+		# for i in range (len(ak)):
+		# 	print(ak[i])
+		# print("")
 	return ak
 
 
@@ -488,7 +495,6 @@ def main(argv=None):
 	# Print shifted qr iteration
 	print("Final QR (calculated with shifts):")
 	qs = None
-	#ak = qr_it_w_shifts(matrix, 0.000001, qs)
 	ak = qr_iterative(matrix, 0.0001, qs)
 	for i in range (len(matrix)):
 		print(ak[i])
@@ -500,7 +506,7 @@ def main(argv=None):
 
 	# Print eigenvectors
 	print("\nEigenvectors are:")
-	qK = get_eigenvectors(matrix, 0.1)
+	qK = get_eigenvectors(matrix, 0.0001)
 	for i in range (len(qK)):
 		print(qK[i])
 
