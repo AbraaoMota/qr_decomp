@@ -500,7 +500,7 @@ def main(argv=None):
 
 	# Print eigenvectors
 	print("\nEigenvectors are:")
-	qK = get_eigenvectors(matrix, 0.001)
+	qK = get_eigenvectors(matrix, 0.1)
 	for i in range (len(qK)):
 		print(qK[i])
 
