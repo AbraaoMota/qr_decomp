@@ -7,7 +7,11 @@ import math
 
 
 #======================================================================
-# Matrix function utilities
+###############   MATRIX UTILITIES    #################################
+#======================================================================
+
+
+# Returns the transpose of a matrix
 def transpose(m):
 	mT = []
 	for column in range (0, len(m[0])):
@@ -17,6 +21,7 @@ def transpose(m):
 		mT.append(rowT)
 	return mT
 
+# Returns a new (not modifying m) matrix without column specified
 def remove_row(m, row):
 	newMatrix = []
 	for r in range(0, len(m)):
@@ -25,6 +30,7 @@ def remove_row(m, row):
 			newMatrix.append(newRow)
 	return newMatrix
 
+# Returns a new (not modifying m) matrix without column specified
 def remove_column(m, column):
 	newMatrix = []
 	for r in range(0, len(m)):
@@ -35,6 +41,7 @@ def remove_column(m, column):
 		newMatrix.append(newRow)
 	return newMatrix
 
+# Finds the determinant of a matrix
 def determinant(m):
 	if len(m) == 2:
 		return ((m[0][0] * m[1][1]) - (m[0][1] * m[1][0]))
@@ -50,6 +57,7 @@ def determinant(m):
 				sum -= determinant(newDet) * num
 		return sum
 
+# Find the inverse of a matrix, returns itself if determinant is 0
 def inverse(m):
 	det = determinant(m) 
 	if det == 0:
@@ -59,6 +67,7 @@ def inverse(m):
 		return m_s_multiply(adjugate_matrix(m), (1 / det))
 
 
+# Scalar matrix multiplication
 def m_s_multiply(m1, n):
 	m3 = []
 	for row in range (0, len(m1)):
@@ -69,6 +78,7 @@ def m_s_multiply(m1, n):
 		m3.append(rowM)
 	return m3
 
+# Scalar multiplication of vector
 def v_s_multiply(v1, n):
 	v2 = []
 	for row in range (len(v1)):
@@ -76,6 +86,7 @@ def v_s_multiply(v1, n):
 	return v2
 
 
+# Adds two matrices
 def m_sum(m1, m2):
 	m3 = []
 	for row in range (0, len(m1)):
@@ -85,12 +96,14 @@ def m_sum(m1, m2):
 		m3.append(row3)
 	return m3
 
+# Adds two vectors
 def v_sum(v1, v2):
 	v3 = []
 	for row in range (len(v1)):
 		v3.append(v1[row] + v2[row])
 	return v3
 
+# Subtracts two matrices
 def m_subtract(m1, m2):
 	m3 = []
 	for row in range (0, len(m1)):
@@ -100,6 +113,7 @@ def m_subtract(m1, m2):
 		m3.append(row3)
 	return m3
 
+# Adds matrix m1 to matrix m2
 def m_add(m1, m2):
 	m3 = []
 	for row in range (0, len(m1)):
@@ -109,12 +123,14 @@ def m_add(m1, m2):
 		m3.append(row3)
 	return m3
 
+# Subtracts v2 from v1
 def v_subtract(v1, v2):
 	v3 = []
 	for r in range (len(v1)):
 		v3.append(v1[r] - v2[r])
 	return v3
 
+# Multiplies a matrix with a matrix (must be a well defined operation)
 def m_m_multiply(m1, m2):
 	m3 = []
 	for row in range (0, len(m1)):
@@ -127,6 +143,7 @@ def m_m_multiply(m1, m2):
 		m3.append(rowM)
 	return m3
 
+# Multiplies a matrix with a vector
 def m_v_multiply(m, v):
 	m2 = []
 	for row in range (0, len(m)):
@@ -136,15 +153,18 @@ def m_v_multiply(m, v):
 		m2.append(product)
 	return m2
 
+# Dot product of 2 vectors
 def dot_product(v1, v2):
 	s = 0
 	for row in range (0, len(v1)):
 		s += v1[row] * v2[row]
 	return s
 
+# Is a matrix singular?
 def is_singular(m):
 	return inverse(m) is not m
 
+# Adjugate matrix used in calculating the determinant
 def adjugate_matrix(m):
 	cofactor = []
 	for r in range (0, len(m)):
@@ -159,6 +179,8 @@ def adjugate_matrix(m):
 		cofactor.append(newRow)
 	return transpose(cofactor)
 
+
+# Normalises a vector, returns itself if norm is 0
 def v_normalise(v):
 	newV = []
 	squaredSum = 0
@@ -171,6 +193,7 @@ def v_normalise(v):
 		newV.append(v[j] / norm)
 	return newV
 
+# Returns a normalised matrix, itself if the determinant is 0
 def m_normalise(m):
 	normQ = []
 	det = determinant(m)
@@ -184,6 +207,7 @@ def m_normalise(m):
 		normQ.append(normRow)
 	return normQ
 
+# Zero matrix size n
 def zero_matrix(dimension):
 	m = []
 	for r in range (dimension):
@@ -193,12 +217,14 @@ def zero_matrix(dimension):
 		m.append(mRow)
 	return m
 
+# Zero vector size n
 def zero_vector(dimension):
 	m = []
 	for c in range (dimension):
 		m.append(float(0))
 	return m
 
+# Identity matrix size n
 def identity_matrix(n):
 	m = []
 	for r in range (n):
@@ -211,9 +237,11 @@ def identity_matrix(n):
 		m.append(mRow)
 	return m
 
+# Get nth row of matrix m
 def get_row(m, n):
 	return m[n]
 
+# Get column n of matrix m
 def get_column(m, n):
 	col = []
 	for r in range (len(m)):
@@ -222,6 +250,7 @@ def get_column(m, n):
 				col.append(m[r][c])
 	return col
 
+# Returns the largest absolute value of the upper triangle of a matrix (used for threshold checking)
 def max_abs_upper_triangle(m):
 	utMax = abs(m[0][1])
 	for r in range (len(m)):
@@ -249,13 +278,19 @@ def create_symmetric_matrix(dimension):
 	return matrix
 
 
-#======================================================================
-####################################################################################
 
+#======================================================================
+###############   QR FUNCTIONALITY    #################################
+#======================================================================
+
+# Finds the U matrix used in QR decomposition
 def find_u(m):
+	# Append original Matrix elements to the row
 	u = [[] for x in range(len(m))]
 	for l in range (len(u)):
 		u[l].append(m[l][0])
+
+	# Apply Gram Schmidt to calculate the sum to subtract
 	for c in range (1, len(m[0])):
 		mN = get_column(m, c)
 		mNcopy = mN[:]
@@ -263,38 +298,51 @@ def find_u(m):
 		for k in range (0, c):
 			eC = v_normalise(get_column(u, k))
 			vectorSum = v_sum(vectorSum, v_s_multiply(eC, dot_product(mNcopy, eC)))
+
+		# Subtract the vector sum
 		uC = v_subtract(mN, vectorSum)
 		for r in range (len(m)):
 			u[r].append(uC[r])
 	return u
 
+# Find Q for QR decomposition
 def find_q(m):
 	q = []
 	u = find_u(m)
 	for i in range (len(u)):
+		# Normalise each column of u and append to q
 		qRow = v_normalise(get_column(u, i))
 		q.append(qRow)
 	return transpose(q)
 
+# Find R for QR decomposition
 def find_r(m, q):
+	# R = Q^T . M
 	return m_m_multiply(transpose(q), m)
 
+# Return pair Q and R
 def qr_decomp(m):
 	q = find_q(m)
 	r = find_r(m, q)
 	return (q, r)
 
 
+# QR iteration with shifts
 def qr_factor(m, qs):
 	lenM = len(m)
+	# Last element * Id matrx
 	shiftId = m_s_multiply(identity_matrix(lenM), m[lenM-1][lenM-1])
 	matrix = m_subtract(m, shiftId)
+	# Decompose the matrix
 	(q, r) = qr_decomp(matrix)
 	rq = m_m_multiply(r, q)
+	# Add the shift back on
 	ak = m_add(rq, shiftId)
+	# Append the q onto the qs list
 	qs.append(q)
 	return ak
 
+# Iteratively calculate qr until it's within the threshold of acceptance
 def qr_iterative(m, threshold, qs):
 	if qs == None:
 		qs = []
@@ -303,28 +351,52 @@ def qr_iterative(m, threshold, qs):
 		ak = qr_factor(ak, qs)
 	return ak
 
-
-def get_eigenvalues(m, threshold, qs):
+# Retrieve eigenvalues from m (recalculates everything)
+def get_raw_eigenvalues(m, threshold, qs):
 	values = []
 	ak = qr_iterative(m , threshold, qs)
 	for r in range (len(ak)):
 		for c in range (len(ak)):
 			if c == r:
+				# Obtain diagonal elements of final matrix
 				eVal = ak[r][c]
 				values.append(eVal)
 	return values
 
-
-def get_eigenvectors(m, threshold):
+# Retrieve eigenvectors from m (recalculates everything)
+def get_raw_eigenvectors(m, threshold):
 	qs = []
 	ak = qr_iterative(m, threshold, qs)
 	qk = identity_matrix(len(m))
+	# Multiply each of the Q's in the qs list to get the eigenvectors
 	for i in range (len(qs)):
 		qk = m_m_multiply(qk, qs[i])
 	return qk
 
+# Retrieve eigenvalues from a previously calculated qr iteration
+def get_eigenvalues(ak):
+	values = []
+	for r in range (len(ak)):
+		for c in range (len(ak)):
+			if c == r:
+				# Obtain diagonal elements of final matrix
+				eVal = ak[r][c]
+				values.append(eVal)
+	return values
+
+# Retrieve eigenvectors from a previously calculated qr iteration (takes the qs list)
+def get_eigenvectors(qs):
+	qk = identity_matrix(len(qs[0][0]))
+	# Multiply each of the Q's in the qs list to get the eigenvectors
+	for i in range (len(qs)):
+		qk = m_m_multiply(qk, qs[i])
+	return qk
+
+
+
 #======================================================================
-# Main
+###############   Main    #################################
+#======================================================================
 def main(argv=None):
  	
 
@@ -354,7 +426,6 @@ def main(argv=None):
 #..............................................................................
 # Get the matrix from either a file given or generate one from the given dimensions
 	matrix = []
-	#matrix = Matrix([])
 	dimension = int(args.n)
 
 	# Parse numbers into the matrix if file given
@@ -365,7 +436,6 @@ def main(argv=None):
 			nums = [float(x) for x in numberStrs]
 			matrix.append(nums)		
 		sourceFile.close()
-
 	# Create our own random symmetric matrix given a dimension	
 	else:
 		matrix = create_symmetric_matrix(dimension)
@@ -397,20 +467,38 @@ def main(argv=None):
 	# Print shifted qr iteration
 	print("Final QR (calculated with shifts):")
 	qs = None
+	print("qs before")
+	print(qs)
 	ak = qr_iterative(matrix, 0.0001, qs)
+	print("qs after")
+	print(qs)
 	for i in range (len(matrix)):
 		print(ak[i])
 
-	# # Print eigenvalues
-	eVal = get_eigenvalues(matrix, 0.0001, None)
+	# # Print eigenvalues 1
+	eVal = get_eigenvalues(ak)
 	print("\nEigenvalues are:")
 	print(eVal)
 
+	# # Print raw eigenvalues
+	# eVal = get_raw_eigenvalues(matrix, 0.0001, None)
+	# print("\nEigenvalues are:")
+	# print(eVal)
+
 	# Print eigenvectors
 	print("\nEigenvectors are:")
-	qK = get_eigenvectors(matrix, 0.0001)
+	qK = get_eigenvectors(qs)
 	for i in range (len(qK)):
 		print(qK[i])
+
+
+
+	# Print eigenvectors
+	print("\nEigenvectors are:")
+	qK = get_raw_eigenvectors(matrix, 0.0001)
+	for i in range (len(qK)):
+		print(qK[i])
+
 
 
 # ==============================================================================
