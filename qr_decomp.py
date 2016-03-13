@@ -268,9 +268,6 @@ def find_u(m):
 			u[r].append(uC[r])
 	return u
 
-def find_r(m, q):
-	return m_m_multiply(transpose(q), m)
-
 def find_q(m):
 	q = []
 	u = find_u(m)
@@ -279,85 +276,13 @@ def find_q(m):
 		q.append(qRow)
 	return transpose(q)
 
+def find_r(m, q):
+	return m_m_multiply(transpose(q), m)
 
 def qr_decomp(m):
-	# q = []	
-	# r = zero_matrix(len(m))
-	# u = zero_matrix(len(m))
-	# for c in range (len(m)):
-	# 	mN = get_column(m, c)
-	# 	mNcopy = mN[:]
-	# 	vectorSum = zero_vector(len(m))
-	# 	norm = 0
-	# 	for k in range (c):			
-	# 		squaredSum = 0
-	# 		for i in range (len(u)):
-	# 			squaredSum += u[i][k] ** 2
-	# 		norm = math.sqrt(squaredSum)
-	# 		uK = get_column(u, k)
-
-	# 		if norm != 0:
-	# 			vectorSum = v_sum(vectorSum, v_s_multiply(v_s_multiply(uK, dot_product(mNcopy, uK)), 1/(norm * norm)))
-	# 			#inter = v_s_multiply(v_s_multiply(uK, dot_product(mNcopy, uK)), 1/(norm * norm))
-	# 			#vectorSum = v_sum(vectorSum, inter)
-	# 		else:
-	# 			vectorSum = zero_vector(len(m))
-
-	# 	# qRow = v_normalise(get_column(u, c))
-	# 	# q.append(qRow)
-
-
-
-
-	# 		# for row in range (len(m)):
-	# 		# 	for c2 in range (row, len(m)):
-	# 		# 		if norm != 0:
-	# 		# 			# Only divide by the norm at the end to avoid loss of accuracy
-	# 		# 			r[row][c2] = dot_product(get_column(m, c2), get_column(u, c2)) / norm
-	# 		# 		else:
-	# 		# 			r[row][c2] = 0
-	# 				# for c1 in range (len(m)):
-	# 				# 	if r[c1][c] == 0:
-	# 				# 		if norm != 0:
-	# 				# 			# Only divide by the norm at the end to avoid loss of accuracy
-	# 				# 			r[c1][c] = dot_product(get_column(m, c), uK) / norm
-	# 				# 		else:
-	# 				# 			r[c1][c] = 0
-
-	# 	uC = v_subtract(mN, vectorSum)
-	# 	for r1 in range (len(m)):
-	# 		u[r1][c] = uC[r1]
-
-
-	# for row in range (len(m)):
-	# 	squaredSum = 0
-	# 	for i in range (0, len(u)):
-	# 		#print("adding %f" % u[i][row])
-	# 		squaredSum += u[i][row] ** 2
-	# 	norm = math.sqrt(squaredSum)
-	# 	for c in range (row, len(m)):
-	# 		if norm != 0:
-	# 			# Only divide by the norm at the end to avoid loss of accuracy
-	# 			r[row][c] = dot_product(get_column(m, c), (get_column(u, row))) / norm
-	# 		else:
-	# 			r[row][c] = 0
-	
-	# # print("U IS:")
-	# # for i in range (len(u)):
-	# # 	print(u[i])
-	# # print("")
-
-	# for i in range (len(u)):
-		
-	# 	qRow = v_normalise(get_column(u, i))
-	# 	q.append(qRow)
-	# q = transpose(q)
-
 	q = find_q(m)
 	r = find_r(m, q)
 	return (q, r)
-
-
 
 
 def qr_factor(m, qs):
@@ -365,10 +290,7 @@ def qr_factor(m, qs):
 	shiftId = m_s_multiply(identity_matrix(lenM), m[lenM-1][lenM-1])
 	matrix = m_subtract(m, shiftId)
 	(q, r) = qr_decomp(matrix)
-	#q = find_q(matrix)
-	#r = find_r(matrix, q)
 	rq = m_m_multiply(r, q)
-
 	ak = m_add(rq, shiftId)
 	qs.append(q)
 	return ak
@@ -377,17 +299,8 @@ def qr_iterative(m, threshold, qs):
 	if qs == None:
 		qs = []
 	ak = qr_factor(m, qs)
-	# print("Ak is:")
-	# for i in range (len(ak)):
-	# 	print(ak[i])
-	# print("")
-	#print(qs)
 	while (max_abs_upper_triangle(ak) > threshold):
 		ak = qr_factor(ak, qs)
-		# print("Ak is:")
-		# for i in range (len(ak)):
-		# 	print(ak[i])
-		# print("")
 	return ak
 
 
@@ -407,19 +320,8 @@ def get_eigenvectors(m, threshold):
 	ak = qr_iterative(m, threshold, qs)
 	qk = identity_matrix(len(m))
 	for i in range (len(qs)):
-	#for i in range (5):
-
-		# print("\n\nMatrix at qi:")
-		# for k in range (len(qs[i])):
-		# 	print(qs[i][k])
-		
-		# print("")
-
 		qk = m_m_multiply(qk, qs[i])
-	# print("len qs is:")
-	# print(len(qs))
 	return qk
-
 
 #======================================================================
 # Main
