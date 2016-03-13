@@ -1,0 +1,32 @@
+Usage of Script:
+
+The actual script is contained in qr_decomp.py, it is a python script.
+It contains a library of matrix functions, followed by the QR Iteration and Decomposition algorithms, including those to calculate eigenvalues/vectors.
+
+In the directory are contained also: qrIt, test4, acctest4 and testMatrix; these are all examples of input the program takes (note no newline at the end of these files). 
+
+
+If chosen to, the program will leave its output in the qrOutput file.
+
+This program has a selection of arguments:
+
+REQUIRED: --n [n] : This argument decides what size the matrix provided will be (if it is generated randomly). If a file is Given, it MUST agree with the size of the matrix in such file
+
+--fileGiven : This is a bool argument, if it is given the script expects a following argument with a file
+
+--filePath [fp] : This argument takes 'fp' as the file to read the matrix input from. It is read from the same directory as where the script is
+
+--threshold [t] : This argument decides how accurate the iterations will be for the QR iteration to finish (how close the values on the upper triangle of the matrix are to 0.) It has a default 		  setting of 0.001
+
+--write : If this argument is given, the output of the program is written to a file in the same directory, called 'qrOutput'
+
+Some sample commands:
+
+"  python qr_decomp.py --n 4 --fileGiven --filePath testMatrix --threshold 0.001 --write   "
+Running this will run the script for a 4x4 matrix, as provided in the 'testMatrix' file. The threshold is user set, but still the same as default. It then writes output to the 'qrOutput' file.
+
+"  python qr_decomp.py --n 5  "
+This runs the script for a random 5x5 symmetric matrix; the output is only recorded on the terminal
+
+"  python qr_decomp.py --n 4 --fileGiven --filePath acctest4 --write  "
+This runs the script on the 4x4 matrix in the 'acctest4' file, writing the output to the 'qrOutput' file.
