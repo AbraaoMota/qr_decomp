@@ -349,12 +349,12 @@ def qr_iterative(m, threshold, qs):
 	ak = qr_factor(m, qs)
 	while (max_abs_upper_triangle(ak) > threshold):
 		ak = qr_factor(ak, qs)
-	return ak
+	return (ak, qs)
 
 # Retrieve eigenvalues from m (recalculates everything)
 def get_raw_eigenvalues(m, threshold, qs):
 	values = []
-	ak = qr_iterative(m , threshold, qs)
+	ak, _ = qr_iterative(m , threshold, qs)
 	for r in range (len(ak)):
 		for c in range (len(ak)):
 			if c == r:
@@ -366,10 +366,10 @@ def get_raw_eigenvalues(m, threshold, qs):
 # Retrieve eigenvectors from m (recalculates everything)
 def get_raw_eigenvectors(m, threshold):
 	qs = []
-	_ = qr_iterative(m, threshold, qs)
+	_, qList = qr_iterative(m, threshold, qs)
 	qk = identity_matrix(len(m))
 	# Multiply each of the Q's in the qs list to get the eigenvectors
-	for i in range (len(qs)):
+	for i in range (len(qList)):
 		qk = m_m_multiply(qk, qs[i])
 	return qk
 
@@ -398,27 +398,39 @@ def get_eigenvectors(qs):
 ###############   Main    #################################
 #======================================================================
 def main(argv=None):
- 	
 
+
+	defaultThreshold = 0.001
+	fileName = "qrOutput"
 # ..........................................................................
   # parse command line arguments (argparse)
 	parser = argparse.ArgumentParser()
 
 	parser.add_argument('--n',
-											help='The dimension to give the matrix if not given from a file',
-											required=True
-											)
+						help='The dimension to give the matrix if not given from a file',
+						required=True
+						)
 	
 	parser.add_argument('--fileGiven',
-											help='Call this argument if input given from file',
-											action='store_true',
-											default= False,
-											required=False)
+						help='Call this argument if input given from file',
+						action='store_true',
+						default= False,
+						required=False)
 
 	parser.add_argument('--filePath',
-									  	help='The input file where a matrix is taken from',
-									  	required = False
-									  	)
+						help='The input file where a matrix is taken from',
+						required = False
+						)
+	parser.add_argument('--threshold',
+						help="The accuracy threshold for which the matrix should approximate 0 (0.001 by default)",
+						default = defaultThreshold,
+						required = False
+						)
+	parser.add_argument('--write',
+						help='Call this argument to write output to a file called "qrOutput" ',
+						action='store_true',
+						default= False,
+						required=False)
 
 	args = parser.parse_args(argv)
 # .........................................................................
@@ -427,6 +439,10 @@ def main(argv=None):
 # Get the matrix from either a file given or generate one from the given dimensions
 	matrix = []
 	dimension = int(args.n)
+
+	# If write has been given, it will write the output to an output file
+	write = args.write
+	newFile = []
 
 	# Parse numbers into the matrix if file given
 	if args.fileGiven:
@@ -440,58 +456,68 @@ def main(argv=None):
 	else:
 		matrix = create_symmetric_matrix(dimension)
 
-	
+	givenThreshold = args.threshold 
+
 	# Print the matrix
-	print("The matrix given is:")
+	mString = "The matrix given is:" 
+	print(mString)
+	newFile.append(mString)
 	for i in range (0,dimension):
 		print(matrix[i])
+		newFile.append(str(matrix[i]))
+		
 
 	# Print QR Decomposition
-	print("")
 	(q, r) = qr_decomp(matrix)
-	print("Q IS:")
+	
+	qString = "\nQ IS:"
+	newFile.append(qString)
+	print(qString)
 	for i in range (len(q)):
 		print(q[i])
-	print("")
-	print("R IS:")
+		newFile.append(str(q[i]))
+	
+	rString = "\nR IS:"
+	print(rString)
+	newFile.append(rString)
 	for i in range (len(r)):
 		print(r[i])
-	print("")
-
-	# u = find_u(matrix)
-	# print("U IS:")
-	# for i in range (len(u)):
-	# 	print(u[i])
-	# print("")
+		newFile.append(str(r[i]))
+	
 
 	# Print shifted qr iteration
-	print("Final QR (calculated with shifts):")
+	qrString = "\nFinal QR iteration (calculated with shifts):"
+	print(qrString)
+	newFile.append(qrString)
 	qs = None
-	print("qs before")
-	print(qs)
-	ak = qr_iterative(matrix, 0.0001, qs)
-	print("qs after")
-	print(qs)
+	ak, qList = qr_iterative(matrix, float(givenThreshold), qs)
 	for i in range (len(matrix)):
 		print(ak[i])
+		newFile.append(str(ak[i]))
 
-	# # Print eigenvalues 1
+	# Print eigenvalues (no recalculation)
 	eVal = get_eigenvalues(ak)
-	print("\nEigenvalues are:")
+	eValString = "\nEigenvalues are:"
+	print(eValString)
+	newFile.append(eValString)
 	print(eVal)
+	newFile.append(str(eVal))
 
-	# Print eigenvectors
-	print("\nEigenvectors are:")
-	qK = get_eigenvectors(qs)
+	# Print eigenvectors (no recalculation)
+	eVecString = "\nEigenvectors are:"
+	print(eVecString)
+	newFile.append(eVecString)
+	qK = get_eigenvectors(qList)
 	for i in range (len(qK)):
 		print(qK[i])
+		newFile.append(str(qK[i]))
 
-	# Print eigenvectors
-	print("\nEigenvectors are:")
-	qK = get_raw_eigenvectors(matrix, 0.0001)
-	for i in range (len(qK)):
-		print(qK[i])
 
+	if write:
+		outputFile = open('qrOutput', 'w')
+		for i in range (len(newFile)):
+			outputFile.write(newFile[i])
+			outputFile.write('\n')
 
 
 # ==============================================================================
